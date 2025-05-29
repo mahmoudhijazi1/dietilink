@@ -8,6 +8,12 @@ trait BelongsToTenant
 {
     protected static function bootBelongsToTenant()
     {
+
+         // Prevent trait from running in CLI (migrate, db:seed, etc.)
+        if (app()->runningInConsole()) {
+            info("Warning");
+            return;
+        }
         static::addGlobalScope('tenant', function (Builder $builder) {
             $user = Auth::user();
             if ($user && $user->tenant_id && $user->role !== 'super_admin') {

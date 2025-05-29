@@ -4,10 +4,13 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToTenantThroughUser;
 use Illuminate\Database\Eloquent\Model;
 
 class Dietitian extends Model
 {
+    use BelongsToTenantThroughUser;
+
     protected $fillable = [
         'user_id', 'clinic_name', 'phone', 'bio'
     ];

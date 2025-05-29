@@ -6,11 +6,12 @@ namespace App\Models;
 use App\Models\Traits\BelongsToTenant;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use Notifiable, HasApiTokens, BelongsToTenant;
+    use Notifiable, HasApiTokens;
 
     protected $fillable = [
         'name',
@@ -45,5 +46,15 @@ class User extends Authenticatable
     {
         return $this->hasOne(Patient::class);
 
+    }
+
+    // In your model:
+    public function scopeForTenant($query)
+    {
+        $user = Auth::user();
+        if ($user && $user->tenant_id && $user->role !== 'super_admin') {
+            $query->where('tenant_id', $user->tenant_id);
+        }
+        return $query;
     }
 }
