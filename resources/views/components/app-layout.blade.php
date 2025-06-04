@@ -31,6 +31,8 @@
         localStorage.getItem("_x_darkMode_on") === "true" &&
             document.documentElement.classList.add("dark");
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 
     @isset($head)
         {{ $head }}
@@ -77,6 +79,10 @@
     <script>
         window.addEventListener("DOMContentLoaded", () => Alpine.start());
     </script>
+    <script>
+    axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+</script>
+
 
     @isset($script)
         {{ $script }}

@@ -30,15 +30,26 @@ class AuthController extends Controller
 
         $validated = $validator->validated();
 
-        if (Auth::attempt([
-            'email' => $validated['email'],
-            'password' => $validated['password'],
-        ])) {
+        if (
+            Auth::attempt([
+                'email' => $validated['email'],
+                'password' => $validated['password'],
+            ])
+        ) {
             // Optionally, redirect based on role, for now redirect to index
-            return redirect()->route('index');
+            if (Auth::user()->role === 'dietitian') {
+                info('dietitan');
+                return redirect()->route('dietitian.dashboard');
+            } else {
+                info('other');
+
+                return redirect()->route('index');
+
+            }
         } else {
             $validator->errors()->add(
-                'password', 'The password does not match with username'
+                'password',
+                'The password does not match with username'
             );
             return redirect()->back()->withErrors($validator)->withInput();
         }
@@ -52,8 +63,8 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'     => ['required', 'string'],
-            'email'    => ['required', 'email', 'unique:users'],
+            'name' => ['required', 'string'],
+            'email' => ['required', 'email', 'unique:users'],
             'password' => ['required', 'confirmed', Password::min(7)],
             // Optionally add: 'role' => ['required', 'in:patient,dietitian']
         ]);
@@ -78,10 +89,10 @@ class AuthController extends Controller
         }
 
         $user = User::create([
-            'name'      => $validated["name"],
-            'email'     => $validated["email"],
-            'password'  => Hash::make($validated["password"]),
-            'role'      => $role,
+            'name' => $validated["name"],
+            'email' => $validated["email"],
+            'password' => Hash::make($validated["password"]),
+            'role' => $role,
             'tenant_id' => $tenant_id,
         ]);
 

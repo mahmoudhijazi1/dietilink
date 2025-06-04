@@ -41,7 +41,7 @@
                                     @foreach ($menu['submenu'] as $keyMenu => $submenu)
                                         <li
                                             @if ($submenu['route_name'] === $pageName) x-init="$el.scrollIntoView({block:'center'}); expanded = true" @endif>
-                                            <a href="{{ route($submenu['route_name']) }}"
+                                            <a href="{"
                                                 class="flex items-center justify-between p-2 text-xs+ tracking-wide
                                                  outline-none transition-[color,padding-left] duration-300 ease-in-out hover:pl-4
                                                  {{ $submenu['route_name'] === $pageName ? 'text-primary dark:text-accent-light font-medium' : 'text-slate-600 hover:text-slate-800 dark:text-navy-200 dark:hover:text-navy-50' }}">
@@ -58,7 +58,7 @@
                             </li>
                         @else
                             <li @if ($menu['route_name'] === $pageName) x-init="$el.scrollIntoView({block:'center'});" @endif>
-                                <a href="{{ route($menu['route_name']) }}"
+                                <a href=""
                                     class="flex text-xs+ py-2  tracking-wide outline-none transition-colors duration-300 ease-in-out {{ $menu['route_name'] === $pageName ? 'text-primary dark:text-accent-light font-medium' : 'text-slate-600  hover:text-slate-800 dark:text-navy-200 dark:hover:text-navy-50' }}">
                                     {{ $menu['title'] }}
                                 </a>
