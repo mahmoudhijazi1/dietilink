@@ -171,7 +171,7 @@ class PatientController extends Controller
         $patient->delete();
 
         // Optionally delete the user as well or just mark as inactive
-        $user->update(['status' => 'deleted']);
+        $user->update(['status' => 'inactive']);
 
         return redirect()->route('dietitian.patients.index')
             ->with('success', 'Patient deleted successfully!');

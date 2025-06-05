@@ -424,7 +424,7 @@
         </div>
     </main>
     
-    @push('scripts')
+    @slot('script')
     <script>
         // Delete modal functionality
         function confirmDelete(patientId) {
@@ -445,5 +445,5 @@
             }
         });
     </script>
-    @endpush
+    @endslot
 </x-app-layout>

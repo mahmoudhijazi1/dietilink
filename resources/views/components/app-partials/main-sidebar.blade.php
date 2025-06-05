@@ -30,7 +30,26 @@
                         d="M12 12c2.7 0 4-1.3 4-4s-1.3-4-4-4-4 1.3-4 4 1.3 4 4 4Zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4Z" />
                 </svg>
             </a>
+            <!-- Dietitian Foods -->
+            <a href="{{ route('dietitian.foods.categories.index') }}"
+                class="flex size-11 items-center justify-center rounded-lg outline-none transition-colors duration-200 {{ request()->routeIs('dietitian.foods.categories.*')  ? 'text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:bg-navy-600 bg-primary/10 dark:text-accent-light dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90' : 'hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25' }}"
+                x-tooltip.placement.right="'Food Categories'">
+                <svg class="size-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <path fill="currentColor"
+                        d="M6 3a1 1 0 011-1h3.5a1 1 0 01.894.553L12.618 5H17a1 1 0 01.832 1.555l-3.5 5a1 1 0 01-.832.445h-1.382l-.618 1.236V19a1 1 0 01-1 1H7a1 1 0 01-1-1V3z" />
+                </svg>
+            </a>
+            <!-- Dietitian Food Items -->
+            <a href="{{ route('dietitian.foods.items.index') }}"
+                class="flex size-11 items-center justify-center rounded-lg outline-none transition-colors duration-200 {{ request()->routeIs('dietitian.foods.items.*') ? 'text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:bg-navy-600 bg-primary/10 dark:text-accent-light dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90' : 'hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25' }}"
+                x-tooltip.placement.right="'Food Items'">
+                <svg class="size-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M4 4h16v2H4V4zm0 4h10v2H4V8zm0 4h16v2H4v-2zm0 4h10v2H4v-2z" />
+                </svg>
+            </a>
         </div>
+
+
 
 
         <!-- Bottom Links -->
@@ -47,7 +66,8 @@
             </a> --}}
 
             <!-- Profile -->
-            <div x-data="usePopper({ placement: 'right-end', offset: 12 })" @click.outside="if(isShowPopper) isShowPopper = false" class="flex">
+            <div x-data="usePopper({ placement: 'right-end', offset: 12 })"
+                @click.outside="if(isShowPopper) isShowPopper = false" class="flex">
                 <button @click="isShowPopper = !isShowPopper" x-ref="popperRef" class="avatar size-12">
                     <img class="rounded-full" src="{{ asset('images/200x200.png') }}" alt="avatar" />
                     <span
@@ -58,8 +78,7 @@
                         class="popper-box w-64 rounded-lg border border-slate-150 bg-white shadow-soft dark:border-navy-600 dark:bg-navy-700">
                         <div class="flex items-center space-x-4 rounded-t-lg bg-slate-100 py-5 px-4 dark:bg-navy-800">
                             <div class="avatar size-14">
-                                <img class="rounded-full" src="{{ asset('images/200x200.png') }}"
-                                    alt="avatar" />
+                                <img class="rounded-full" src="{{ asset('images/200x200.png') }}" alt="avatar" />
                             </div>
                             <div>
                                 <a href="#"
@@ -114,8 +133,7 @@
                             </a>
                             <a href="#"
                                 class="group flex items-center space-x-3 py-2 px-4 tracking-wide outline-none transition-all hover:bg-slate-100 focus:bg-slate-100 dark:hover:bg-navy-600 dark:focus:bg-navy-600">
-                                <div
-                                    class="flex size-8 items-center justify-center rounded-lg bg-secondary text-white">
+                                <div class="flex size-8 items-center justify-center rounded-lg bg-secondary text-white">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round"

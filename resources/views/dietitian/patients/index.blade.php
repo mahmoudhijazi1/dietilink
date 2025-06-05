@@ -176,7 +176,8 @@
                                                 <div class="badge bg-warning/10 text-warning dark:bg-warning/15">Invited</div>
                                             @else
                                                 <div class="badge bg-error/10 text-error dark:bg-error/15">
-                                                    {{ ucfirst($patient->user->status) }}</div>
+                                                    {{ ucfirst($patient->user->status) }}
+                                                </div>
                                             @endif
                                         </td>
                                         <td class="whitespace-nowrap px-3 py-3">
@@ -221,15 +222,18 @@
                                                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                     </svg>
                                                 </a>
-                                                <button onclick="confirmDelete({{ $patient->id }})"
+                                                <button  
+                                                onclick="confirmDelete(this)"
                                                     class="btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
-                                                    title="Delete">
+                                                    title="Delete" data-id="{{ $patient->id }}"
+                                                    data-action="{{ route('dietitian.patients.destroy', ['patient' => '__ID__']) }}">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none"
                                                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
                                                             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                     </svg>
                                                 </button>
+
                                             </div>
                                         </td>
                                     </tr>
@@ -306,13 +310,26 @@
         </div>
     </main>
 
-    @push('scripts')
+    @slot('script')
         <script>
-            function confirmDelete(patientId) {
-                document.getElementById('deleteForm').action = '{{ route("dietitian.patients.index") }}/' + patientId;
-                document.getElementById('deleteModal').classList.remove('hidden');
-                document.getElementById('deleteModal').classList.add('flex');
+            function confirmDelete(button) {
+                const id = button.getAttribute('data-id');
+                const actionTemplate = button.getAttribute('data-action');
+                const finalAction = actionTemplate.replace('__ID__', id);
+                console.log({ id, actionTemplate, finalAction });
+
+                const form = document.getElementById('deleteForm');
+                form.action = finalAction;
+
+                const modal = document.getElementById('deleteModal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                form.addEventListener('submit', function () {
+                form.querySelector('button[type="submit"]').disabled = true;
+            });
             }
+
+            
 
             function hideDeleteModal() {
                 document.getElementById('deleteModal').classList.add('hidden');
@@ -345,5 +362,5 @@
                 }
             });
         </script>
-    @endpush
+    @endslot
 </x-app-layout>

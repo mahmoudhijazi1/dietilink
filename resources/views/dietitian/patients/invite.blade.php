@@ -342,8 +342,8 @@
         </div>
     </main>
 
-    @push('scripts')
+    @slot('script')
     <!-- QR Code Library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    @endpush
+    @endslot
 </x-app-layout>

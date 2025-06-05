@@ -11,7 +11,7 @@ trait BelongsToTenant
 
          // Prevent trait from running in CLI (migrate, db:seed, etc.)
         if (app()->runningInConsole()) {
-            info("Warning");
+            info("Warning: BelongToTenant.php file ");
             return;
         }
         static::addGlobalScope('tenant', function (Builder $builder) {
