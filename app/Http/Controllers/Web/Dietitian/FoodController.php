@@ -9,18 +9,16 @@ use Illuminate\Http\Request;
 
 class FoodController extends Controller
 {
+    // ==== UNIFIED FOOD MANAGEMENT ====
+
+    public function indexItems()
+    {
+        $items = FoodItem::with('category')->latest()->paginate(10);
+        $categories = FoodCategory::withCount('foodItems')->get();
+        return view('dietitian.foods.items.index', compact('items', 'categories'));
+    }
+
     // ==== FOOD CATEGORIES ====
-
-    public function indexCategories()
-    {
-        $categories = FoodCategory::latest()->paginate(10);
-        return view('dietitian.foods.categories.index', compact('categories'));
-    }
-
-    public function createCategory()
-    {
-        return view('dietitian.foods.categories.create');
-    }
 
     public function storeCategory(Request $request)
     {
@@ -30,13 +28,8 @@ class FoodController extends Controller
 
         FoodCategory::create($validated);
 
-        return redirect()->route('dietitian.foods.categories.index')
+        return redirect()->route('dietitian.foods.items.index')
             ->with('success', 'Food category created successfully.');
-    }
-
-    public function editCategory(FoodCategory $foodCategory)
-    {
-        return view('dietitian.foods.categories.edit', compact('foodCategory'));
     }
 
     public function updateCategory(Request $request, FoodCategory $foodCategory)
@@ -47,25 +40,25 @@ class FoodController extends Controller
 
         $foodCategory->update($validated);
 
-        return redirect()->route('dietitian.foods.categories.index')
+        return redirect()->route('dietitian.foods.items.index')
             ->with('success', 'Food category updated successfully.');
     }
 
     public function destroyCategory(FoodCategory $foodCategory)
     {
+        // Check if category has items
+        if ($foodCategory->foodItems()->count() > 0) {
+            return redirect()->route('dietitian.foods.items.index')
+                ->with('error', 'Cannot delete category that contains food items.');
+        }
+
         $foodCategory->delete();
 
-        return redirect()->route('dietitian.foods.categories.index')
+        return redirect()->route('dietitian.foods.items.index')
             ->with('success', 'Food category deleted successfully.');
     }
 
     // ==== FOOD ITEMS ====
-
-    public function indexItems()
-    {
-        $items = FoodItem::with('category')->latest()->paginate(10);
-        return view('dietitian.foods.items.index', compact('items'));
-    }
 
     public function createItem()
     {
@@ -100,8 +93,6 @@ class FoodController extends Controller
             'food_category_id' => 'required|exists:food_categories,id',
             'unit' => 'required|string|max:50',
         ]);
-
-
 
         $foodItem->update($validated);
 

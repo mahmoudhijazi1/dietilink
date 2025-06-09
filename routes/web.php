@@ -76,7 +76,18 @@ Route::middleware('auth')->group(function () {
             Route::put('foods/items/{foodItem}', [FoodController::class, 'updateItem'])->name('foods.items.update');
             Route::delete('foods/items/{foodItem}', [FoodController::class, 'destroyItem'])->name('foods.items.destroy');
 
-
+            // Meal Plan routes
+            Route::prefix('meal-plans')->name('meal-plans.')->group(function () {
+                Route::get('/', [MealPlanController::class, 'index'])->name('index');
+                Route::get('/create', [MealPlanController::class, 'create'])->name('create');
+                Route::post('/', [MealPlanController::class, 'store'])->name('store');
+                Route::get('/{mealPlan}/edit', [MealPlanController::class, 'edit'])->name('edit');
+                Route::put('/{mealPlan}', [MealPlanController::class, 'update'])->name('update');
+                Route::get('/{mealPlan}', [MealPlanController::class, 'show'])->name('show');
+                Route::delete('/{mealPlan}', [MealPlanController::class, 'destroy'])->name('destroy');
+                Route::post('/{mealPlan}/activate', [MealPlanController::class, 'activate'])->name('activate');
+            }); 
+//http://127.0.0.1:9004/dietitian/meal-plans/4/activate
         });
 
 

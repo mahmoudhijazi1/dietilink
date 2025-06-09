@@ -10,10 +10,13 @@ class MealPlan extends Model
     use BelongsToTenant;
 
     protected $fillable = [
-        'name',
-        'patient_id',
-        'notes',
-    ];
+    'tenant_id',
+    'patient_id',
+    'name',
+    'notes',
+    'status',
+];
+
 
     public function patient()
     {

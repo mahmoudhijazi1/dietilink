@@ -39,6 +39,11 @@ class Patient extends Model
     {
         return $this->hasMany(ProgressEntry::class);
     }
+    public function mealPlans()
+{
+    return $this->hasMany(MealPlan::class);
+}
+
 
     // add boot
     protected static function boot()

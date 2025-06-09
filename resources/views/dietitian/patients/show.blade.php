@@ -37,7 +37,7 @@
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                     clip-rule="evenodd" />
             </svg>
-            <span>{{ session('success') }}</span>
+            <span>&nbsp;{{ session('success') }}</span>
         </div>
         @endif
 
@@ -170,12 +170,15 @@
 
             <!-- Tabs Section -->
             <div class="col-span-12 lg:col-span-8">
-                <div class="card" x-data="{activeTab:'progressTab'}">
+                <div class="card" x-data="{activeTab:'mealPlansTab'}">
                     <div class="flex flex-col items-center space-y-4 border-b border-slate-200 p-4 dark:border-navy-500 sm:flex-row sm:justify-between sm:space-y-0 sm:px-5">
                         <h2 class="text-lg font-medium tracking-wide text-slate-700 dark:text-navy-100">
                             Patient Information
                         </h2>
                         <div class="flex justify-center space-x-2">
+                            <button @click="activeTab = 'mealPlansTab'" class="btn min-w-[7rem] rounded-full" :class="activeTab === 'mealPlansTab' ? 'bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90' : 'border border-slate-300 font-medium text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90'">
+                                Meal Plans
+                            </button>
                             <button @click="activeTab = 'progressTab'" class="btn min-w-[7rem] rounded-full" :class="activeTab === 'progressTab' ? 'bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90' : 'border border-slate-300 font-medium text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90'">
                                 Progress
                             </button>
@@ -188,8 +191,172 @@
                         </div>
                     </div>
 
+                    <!-- Meal Plans Tab -->
+                    <div x-show="activeTab === 'mealPlansTab'" class="p-4 sm:p-5" x-data="mealPlansManager()">
+                        <div class="flex justify-between mb-5">
+                            <h3 class="text-lg font-medium text-slate-700 dark:text-navy-100">
+                                Meal Plans
+                            </h3>
+                            <a href="{{ route('dietitian.meal-plans.create') }}?patient_id={{ $patient->id }}" class="btn bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                                Create New Plan
+                            </a>
+                        </div>
+
+                        <!-- Active Meal Plan -->
+                        @php
+                            $activePlan = $patient->mealPlans->where('status', 'active')->first();
+                        @endphp
+
+                        @if($activePlan)
+                            <div class="mb-6 rounded-lg border-2 border-success bg-success/5 p-4 dark:bg-success/10">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="flex items-center justify-center size-10 rounded-full bg-success text-white">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-semibold text-slate-800 dark:text-navy-50">{{ $activePlan->name }}</h4>
+                                            <p class="text-sm text-success">Currently Active Plan</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <a href="{{ route('dietitian.meal-plans.show', $activePlan->id) }}" 
+                                           class="btn size-8 rounded-full p-0 hover:bg-success/20 text-success">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                            </svg>
+                                        </a>
+                                        <a href="{{ route('dietitian.meal-plans.edit', $activePlan->id) }}" 
+                                           class="btn size-8 rounded-full p-0 hover:bg-info/20 text-info">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Active Plan Summary -->
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                    <div class="flex items-center space-x-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 text-slate-600 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <span class="text-sm">Created {{ $activePlan->created_at->format('M d, Y') }}</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 text-slate-600 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                        </svg>
+                                        <span class="text-sm">{{ $activePlan->meals->count() }} meals configured</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 text-slate-600 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                        </svg>
+                                        <span class="text-sm">{{ $activePlan->meals->sum(function($meal) { return $meal->mealItems->count(); }) }} food items</span>
+                                    </div>
+                                </div>
+
+                                @if($activePlan->notes)
+                                    <div class="mt-3 p-3 rounded-lg bg-white/50 dark:bg-navy-700/50">
+                                        <p class="text-sm text-slate-700 dark:text-navy-200">{{ $activePlan->notes }}</p>
+                                    </div>
+                                @endif
+                            </div>
+                        @else
+                            <div class="mb-6 rounded-lg border-2 border-dashed border-slate-300 p-8 text-center dark:border-navy-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-12 mx-auto text-slate-400 dark:text-navy-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                                <h4 class="text-lg font-medium text-slate-700 dark:text-navy-100 mb-2">No Active Meal Plan</h4>
+                                <p class="text-slate-500 dark:text-navy-300 mb-4">This patient doesn't have an active meal plan yet.</p>
+                                <a href="{{ route('dietitian.meal-plans.create') }}?patient_id={{ $patient->id }}" class="btn bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
+                                    Create First Meal Plan
+                                </a>
+                            </div>
+                        @endif
+
+                        <!-- Other Meal Plans -->
+                        @php
+                            $otherPlans = $patient->mealPlans->where('status', '!=', 'active');
+                        @endphp
+
+                        @if($otherPlans->count() > 0)
+                            <div class="space-y-4">
+                                <h4 class="text-base font-medium text-slate-700 dark:text-navy-100">Other Meal Plans ({{ $otherPlans->count() }})</h4>
+                                
+                                <div class="space-y-3">
+                                    @foreach($otherPlans as $plan)
+                                        <div class="flex items-center justify-between p-4 rounded-lg border border-slate-200 dark:border-navy-600 bg-white dark:bg-navy-800">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="flex items-center justify-center size-10 rounded-full {{ $plan->status === 'draft' ? 'bg-warning/10 text-warning' : 'bg-slate-100 text-slate-600 dark:bg-navy-600 dark:text-navy-300' }}">
+                                                    @if($plan->status === 'draft')
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                        </svg>
+                                                    @else
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+                                                        </svg>
+                                                    @endif
+                                                </div>
+                                                <div>
+                                                    <h5 class="font-medium text-slate-800 dark:text-navy-50">{{ $plan->name }}</h5>
+                                                    <div class="flex items-center space-x-4 text-sm text-slate-500 dark:text-navy-300">
+                                                        <span>{{ ucfirst($plan->status) }}</span>
+                                                        <span>•</span>
+                                                        <span>{{ $plan->meals->count() }} meals</span>
+                                                        <span>•</span>
+                                                        <span>{{ $plan->created_at->format('M d, Y') }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <button @click="activatePlan({{ $plan->id }})" 
+                                                        :disabled="isLoading"
+                                                        class="btn size-8 rounded-full p-0 hover:bg-success/20 text-success disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        title="Make Active">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    </svg>
+                                                </button>
+                                                <a href="{{ route('dietitian.meal-plans.show', $plan->id) }}" 
+                                                   class="btn size-8 rounded-full p-0 hover:bg-slate-300/20 text-slate-600 dark:text-navy-300">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                    </svg>
+                                                </a>
+                                                <a href="{{ route('dietitian.meal-plans.edit', $plan->id) }}" 
+                                                   class="btn size-8 rounded-full p-0 hover:bg-info/20 text-info">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                    </svg>
+                                                </a>
+                                                <button @click="deletePlan({{ $plan->id }})" 
+                                                        :disabled="isLoading"
+                                                        class="btn size-8 rounded-full p-0 hover:bg-error/20 text-error disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        title="Delete Plan">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+
                     <!-- Progress Tab -->
-                    <div x-show="activeTab === 'progressTab'" class="p-4 sm:p-5">
+                    <div x-show="activeTab === 'progressTab'" class="p-4 sm:p-5" style="display: none;">
                         <div class="flex justify-between mb-5">
                             <h3 class="text-lg font-medium text-slate-700 dark:text-navy-100">
                                 Weight Progress
@@ -444,6 +611,132 @@
                 hideDeleteModal();
             }
         });
+
+        // Meal Plans Manager
+        function mealPlansManager() {
+            return {
+                isLoading: false,
+
+                async activatePlan(planId) {
+                    if (this.isLoading) return;
+                    
+                    this.isLoading = true;
+                    
+                    try {
+                        const response = await fetch(`/dietitian/meal-plans/${planId}/activate`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            }
+                        });
+
+                        if (response.ok) {
+                            this.showToast('Meal plan activated successfully!', 'success');
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1500);
+                        } else {
+                            const errorData = await response.json();
+                            throw new Error(errorData.error || 'Failed to activate meal plan');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        this.showToast('Error activating meal plan. Please try again.', 'error');
+                    } finally {
+                        this.isLoading = false;
+                    }
+                },
+
+                async deletePlan(planId) {
+                    if (this.isLoading) return;
+                    
+                    if (!confirm('Are you sure you want to delete this meal plan? This action cannot be undone.')) {
+                        return;
+                    }
+                    
+                    this.isLoading = true;
+                    
+                    try {
+                        const response = await fetch(`/dietitian/meal-plans/${planId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            }
+                        });
+
+                        if (response.ok) {
+                            this.showToast('Meal plan deleted successfully!', 'success');
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1500);
+                        } else {
+                            const errorData = await response.json();
+                            throw new Error(errorData.error || 'Failed to delete meal plan');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        this.showToast('Error deleting meal plan. Please try again.', 'error');
+                    } finally {
+                        this.isLoading = false;
+                    }
+                },
+
+                showToast(message, type = 'success') {
+                    // Remove existing toasts
+                    const existingToasts = document.querySelectorAll('.toast-notification');
+                    existingToasts.forEach(toast => toast.remove());
+
+                    // Create new toast
+                    const toast = document.createElement('div');
+                    toast.className = `toast-notification fixed top-4 right-4 z-50 max-w-md rounded-lg px-4 py-3 shadow-lg transition-all duration-300 transform ${
+                        type === 'success' 
+                            ? 'bg-success border border-success text-white' 
+                            : 'bg-error border border-error text-white'
+                    }`;
+                    
+                    toast.innerHTML = `
+                        <div class="flex items-center space-x-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                ${type === 'success' 
+                                    ? '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>'
+                                    : '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>'
+                }
+                            </svg>
+                            <span class="font-medium">${message}</span>
+                            <button onclick="this.parentElement.parentElement.remove()" class="ml-auto flex-shrink-0 hover:opacity-70">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Add to DOM
+                    document.body.appendChild(toast);
+                    
+                    // Animate in
+                    setTimeout(() => {
+                        toast.style.transform = 'translateX(0)';
+                        toast.style.opacity = '1';
+                    }, 100);
+                    
+                    // Auto remove after 4 seconds
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.style.transform = 'translateX(100%)';
+                            toast.style.opacity = '0';
+                            setTimeout(() => {
+                                if (toast.parentNode) {
+                                    toast.parentNode.removeChild(toast);
+                                }
+                            }, 300);
+                        }
+                    }, 4000);
+                }
+            };
+        }
     </script>
     @endslot
 </x-app-layout>

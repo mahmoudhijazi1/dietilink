@@ -36,18 +36,21 @@ class PatientController extends Controller
         return view('dietitian.patients.index', compact('patients', 'search'));
     }
 
-    public function show($id)
-    {
-        $patient = Patient::with([
-            'user',
-            'progressEntries' => function ($query) {
-                $query->latest();
-            }
-        ])
-            ->findOrFail($id);
+public function show($id)
+{
+    $patient = Patient::with([
+        'user',
+        'progressEntries' => function ($query) {
+            $query->latest();
+        },
+        'mealPlans' => function ($query) {
+            $query->with(['meals.mealItems.foodItem'])->latest();
+        }
+    ])
+        ->findOrFail($id);
 
-        return view('dietitian.patients.show', compact('patient'));
-    }
+    return view('dietitian.patients.show', compact('patient'));
+}
 
     /**
      * Show invite form for new patient

@@ -8,13 +8,15 @@ use App\Models\Traits\BelongsToTenant;
 class MealItem extends Model
 {
     use BelongsToTenant;
-
     protected $fillable = [
+        'tenant_id',
         'meal_id',
         'food_item_id',
-        'portion_size',     // e.g., "1 cup", "100g", "1 slice"
+        'portion_size',
         'notes',
+        'order',
     ];
+
 
     public function meal()
     {

@@ -10,12 +10,15 @@ class Meal extends Model
     use BelongsToTenant;
 
     protected $fillable = [
-        'meal_plan_id',
-        'type',        // e.g., breakfast, lunch, dinner
-        'title',       // e.g., Option 1, Option 2
-        'description',
-        'note',
-    ];
+    'tenant_id',
+    'meal_plan_id',
+    'type',
+    'title',
+    'description',
+    'note',
+    'order',
+];
+
 
     public function mealPlan()
     {

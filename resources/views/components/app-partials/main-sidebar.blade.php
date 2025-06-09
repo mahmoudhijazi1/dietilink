@@ -4,50 +4,64 @@
         <!-- Application Logo -->
         <div class="flex pt-4">
             <a href="/">
-                <img class="size-11 transition-transform duration-500 ease-in-out hover:rotate-[360deg]"
+                <img class="size-11 transition-transform duration-9 00 ease-in-out hover:rotate-[360deg]"
                     src="{{ asset('images/app-logo.svg') }}" alt="logo" />
             </a>
         </div>
 
         <!-- Main Sections Links -->
-        <div class="is-scrollbar-hidden flex grow flex-col space-y-4 overflow-y-auto pt-6">
-            <!-- Dietitian Dashboard -->
-            <a href="{{ route('dietitian.dashboard') }}"
-                class="flex size-11 items-center justify-center rounded-lg outline-none transition-colors duration-200 {{ request()->routeIs('dietitian.dashboard') ? 'text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:bg-navy-600 bg-primary/10 dark:text-accent-light dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90' : 'hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25' }}"
-                x-tooltip.placement.right="'Dashboard'">
-                <svg class="size-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <path fill="currentColor" fill-opacity=".3"
-                        d="M4 4h7v7H4V4zm0 9h7v7H4v-7zm9-9h7v7h-7V4zm0 9h7v7h-7v-7z" />
-                </svg>
-            </a>
+<div class="is-scrollbar-hidden flex grow flex-col space-y-4 overflow-y-auto pt-6">
+    <!-- Dietitian Dashboard -->
+    <a href="{{ route('dietitian.dashboard') }}"
+        class="flex size-11 items-center justify-center rounded-lg outline-none transition-colors duration-200 {{ request()->routeIs('dietitian.dashboard') ? 'text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:bg-navy-600 bg-primary/10 dark:text-accent-light dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90' : 'hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25' }}"
+        x-tooltip.placement.right="'Dashboard'">
+        <svg class="size-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0h6" />
+        </svg>
+    </a>
 
-            <!-- Dietitian Patients -->
-            <a href="{{ route('dietitian.patients.index') }}"
-                class="flex size-11 items-center justify-center rounded-lg outline-none transition-colors duration-200 {{ request()->routeIs('dietitian.patients.*') ? 'text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:bg-navy-600 bg-primary/10 dark:text-accent-light dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90' : 'hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25' }}"
-                x-tooltip.placement.right="'Patients'">
-                <svg class="size-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <path fill="currentColor"
-                        d="M12 12c2.7 0 4-1.3 4-4s-1.3-4-4-4-4 1.3-4 4 1.3 4 4 4Zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4Z" />
-                </svg>
-            </a>
-            <!-- Dietitian Foods -->
-            <a href="{{ route('dietitian.foods.categories.index') }}"
-                class="flex size-11 items-center justify-center rounded-lg outline-none transition-colors duration-200 {{ request()->routeIs('dietitian.foods.categories.*')  ? 'text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:bg-navy-600 bg-primary/10 dark:text-accent-light dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90' : 'hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25' }}"
-                x-tooltip.placement.right="'Food Categories'">
-                <svg class="size-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <path fill="currentColor"
-                        d="M6 3a1 1 0 011-1h3.5a1 1 0 01.894.553L12.618 5H17a1 1 0 01.832 1.555l-3.5 5a1 1 0 01-.832.445h-1.382l-.618 1.236V19a1 1 0 01-1 1H7a1 1 0 01-1-1V3z" />
-                </svg>
-            </a>
-            <!-- Dietitian Food Items -->
-            <a href="{{ route('dietitian.foods.items.index') }}"
-                class="flex size-11 items-center justify-center rounded-lg outline-none transition-colors duration-200 {{ request()->routeIs('dietitian.foods.items.*') ? 'text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:bg-navy-600 bg-primary/10 dark:text-accent-light dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90' : 'hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25' }}"
-                x-tooltip.placement.right="'Food Items'">
-                <svg class="size-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M4 4h16v2H4V4zm0 4h10v2H4V8zm0 4h16v2H4v-2zm0 4h10v2H4v-2z" />
-                </svg>
-            </a>
-        </div>
+    <!-- Dietitian Patients -->
+    <a href="{{ route('dietitian.patients.index') }}"
+        class="flex size-11 items-center justify-center rounded-lg outline-none transition-colors duration-200 {{ request()->routeIs('dietitian.patients.*') ? 'text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:bg-navy-600 bg-primary/10 dark:text-accent-light dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90' : 'hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25' }}"
+        x-tooltip.placement.right="'Patients'">
+        <svg class="size-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M12 12a4 4 0 100-8 4 4 0 000 8zm6 8h.01M6 20h.01" />
+        </svg>
+    </a>
+
+    <!-- Food Categories -->
+    {{-- <a href="{{ route('dietitian.foods.categories.index') }}"
+        class="flex size-11 items-center justify-center rounded-lg outline-none transition-colors duration-200 {{ request()->routeIs('dietitian.foods.categories.*') ? 'text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:bg-navy-600 bg-primary/10 dark:text-accent-light dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90' : 'hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25' }}"
+        x-tooltip.placement.right="'Food Categories'">
+        <svg class="size-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 7h18M3 12h18M3 17h18" />
+        </svg>
+    </a> --}}
+
+    <!-- Food Items -->
+    <a href="{{ route('dietitian.foods.items.index') }}"
+        class="flex size-11 items-center justify-center rounded-lg outline-none transition-colors duration-200 {{ request()->routeIs('dietitian.foods.items.*') ? 'text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:bg-navy-600 bg-primary/10 dark:text-accent-light dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90' : 'hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25' }}"
+        x-tooltip.placement.right="'Food Management'">
+        <svg class="size-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8c1.104 0 2-.896 2-2s-.896-2-2-2-2 .896-2 2 .896 2 2 2zm0 2c-2.21 0-4 1.343-4 3v1h8v-1c0-1.657-1.79-3-4-3z" />
+        </svg>
+    </a>
+
+    <!-- Meal Plans -->
+    <a href="{{ route('dietitian.meal-plans.index') }}"
+        class="flex size-11 items-center justify-center rounded-lg outline-none transition-colors duration-200 {{ request()->routeIs('dietitian.meal-plans.*') ? 'text-primary hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:bg-navy-600 bg-primary/10 dark:text-accent-light dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90' : 'hover:bg-primary/20 focus:bg-primary/20 active:bg-primary/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25' }}"
+        x-tooltip.placement.right="'Meal Plans'">
+        <svg class="size-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 4a1 1 0 011-1h1.5a1 1 0 01.832.445L7.382 5H20a1 1 0 011 1v1H3V4zm0 4h18v12a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm5 4h8m-8 4h5" />
+        </svg>
+    </a>
+</div>
+
 
 
 
