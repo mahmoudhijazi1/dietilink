@@ -32,6 +32,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
     Route::get('/', [PagesController::class, 'dashboardsCrmAnalytics'])->name('index');
 
+    Route::get('/api/check-username', [App\Http\Controllers\Web\Dietitian\PatientController::class, 'checkUsername'])
+        ->name('api.check-username');
+
+
     Route::prefix('dietitian')
         ->middleware(['tenant'])
         ->name('dietitian.')
@@ -41,7 +45,9 @@ Route::middleware('auth')->group(function () {
             // Patient routes
             Route::get('patients/invite', [PatientController::class, 'inviteView'])->name('patients.invite');
             Route::post('patients/invite', [PatientController::class, 'inviteSubmit'])->name('patients.invite.submit');
+            Route::post('patients/store', [PatientController::class, 'createWithCredentials'])->name('patients.store');
             Route::get('patients', [PatientController::class, 'index'])->name('patients.index');
+            Route::get('patients/create', [PatientController::class, 'create'])->name('patients.create');
             Route::get('patients/{patient}', [PatientController::class, 'show'])->name('patients.show');
             Route::get('patients/{patient}/edit', [PatientController::class, 'edit'])->name('patients.edit');
             Route::put('patients/{patient}', [PatientController::class, 'update'])->name('patients.update');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Dietitian;
 use App\Http\Controllers\Controller;
 use App\Models\Patient;
 use App\Models\User;
+use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -36,6 +37,102 @@ class PatientController extends Controller
 
         return view('dietitian.patients.index', compact('patients', 'search'));
     }
+
+    public function create(){
+        return view('dietitian.patients.create');
+    }
+
+
+    public function createWithCredentials(Request $request)
+{
+    $request->validate([
+        // Required fields
+        'name' => 'required|string|max:255',
+        'username' => 'required|string|max:255|unique:users,username',
+        'password' => 'required|string|min:8',
+        
+        // Optional fields with validation
+        'phone' => 'nullable|string|max:20',
+        'gender' => 'nullable|string|in:male,female,other',
+        'date_of_birth' => 'nullable|date|before:today',
+        'occupation' => 'nullable|string|max:255',
+    ]);
+
+    // Create the user account
+    $user = User::create([
+        'name' => $request->name,
+        'username' => $request->username,
+        'email' => $request->username . '@example.com', // Temporary email, can be updated later
+        'password' => Hash::make($request->password),
+        'role' => 'patient',
+        'tenant_id' => auth()->user()->tenant_id,
+        'status' => 'active',
+    ]);
+
+    // Create the patient profile with all available data
+    Patient::create([
+        'user_id' => $user->id,
+        
+        // Personal information
+        'phone' => $request->phone,
+        'gender' => $request->gender,
+        'birth_date' => $request->date_of_birth,
+        'occupation' => $request->occupation,
+        
+        // All other fields will be null initially and can be filled later
+        // Physical measurements
+        'height' => null,
+        'initial_weight' => null,
+        'goal_weight' => null,
+        'activity_level' => null,
+        
+        // Medical history
+        'medical_conditions' => null,
+        'allergies' => null,
+        'medications' => null,
+        'surgeries' => null,
+        'smoking_status' => null,
+        'gi_symptoms' => null,
+        'recent_blood_test' => null,
+        
+        // Food history
+        'dietary_preferences' => null,
+        'alcohol_intake' => null,
+        'coffee_intake' => null,
+        'vitamin_intake' => null,
+        'daily_routine' => null,
+        'physical_activity_details' => null,
+        'previous_diets' => null,
+        'weight_history' => null,
+        'subscription_reason' => null,
+        
+        // Notes
+        'notes' => null,
+    ]);
+
+    return redirect()->route('dietitian.patients.index')
+        ->with('success', 'Patient "' . $request->name . '" created successfully with login credentials.');
+}
+
+    
+public function checkUsername(Request $request)
+{
+    $username = $request->get('username');
+    
+    if (empty($username) || strlen($username) < 3) {
+        return response()->json([
+            'available' => null,
+            'message' => ''
+        ]);
+    }
+    
+    $exists = User::where('username', $username)->exists();
+    
+    return response()->json([
+        'available' => !$exists,
+        'message' => $exists ? 'Username is already taken' : 'Username is available'
+    ]);
+}
 
     public function show($id)
     {
@@ -125,13 +222,13 @@ class PatientController extends Controller
             'gender' => 'nullable|string|in:male,female,other',
             'occupation' => 'nullable|string|max:255',
             'birth_date' => 'nullable|date|before:today',
-            
+
             // Physical measurements
             'height' => 'nullable|numeric|min:50|max:300',
             'initial_weight' => 'nullable|numeric|min:20|max:500',
             'goal_weight' => 'nullable|numeric|min:20|max:500',
             'activity_level' => 'nullable|string|max:255',
-            
+
             // Medical history
             'medical_conditions' => 'nullable|string',
             'medications' => 'nullable|string',
@@ -140,7 +237,7 @@ class PatientController extends Controller
             'gi_symptoms' => 'nullable|string',
             'recent_blood_test' => 'nullable|string',
             'allergies' => 'nullable|string',
-            
+
             // Food history
             'dietary_preferences' => 'nullable|string',
             'alcohol_intake' => 'nullable|string',
@@ -151,7 +248,7 @@ class PatientController extends Controller
             'previous_diets' => 'nullable|string',
             'weight_history' => 'nullable|string',
             'subscription_reason' => 'nullable|string',
-            
+
             // Notes
             'notes' => 'nullable|string',
         ]);
@@ -174,13 +271,13 @@ class PatientController extends Controller
             'gender' => $request->gender,
             'occupation' => $request->occupation,
             'birth_date' => $request->birth_date,
-            
+
             // Physical measurements
             'height' => $request->height,
             'initial_weight' => $request->initial_weight,
             'goal_weight' => $request->goal_weight,
             'activity_level' => $request->activity_level,
-            
+
             // Medical history
             'medical_conditions' => $request->medical_conditions,
             'medications' => $request->medications,
@@ -189,7 +286,7 @@ class PatientController extends Controller
             'gi_symptoms' => $request->gi_symptoms,
             'recent_blood_test' => $request->recent_blood_test,
             'allergies' => $request->allergies,
-            
+
             // Food history
             'dietary_preferences' => $request->dietary_preferences,
             'alcohol_intake' => $request->alcohol_intake,
@@ -200,7 +297,7 @@ class PatientController extends Controller
             'previous_diets' => $request->previous_diets,
             'weight_history' => $request->weight_history,
             'subscription_reason' => $request->subscription_reason,
-            
+
             // Notes
             'notes' => $request->notes,
         ]);
@@ -232,8 +329,9 @@ class PatientController extends Controller
      */
     private function calculateAge($birthDate)
     {
-        if (!$birthDate) return null;
-        
+        if (!$birthDate)
+            return null;
+
         return \Carbon\Carbon::parse($birthDate)->age;
     }
 
@@ -242,8 +340,9 @@ class PatientController extends Controller
      */
     private function calculateBMI($height, $weight)
     {
-        if (!$height || !$weight) return null;
-        
+        if (!$height || !$weight)
+            return null;
+
         // Convert height from cm to meters
         $heightInMeters = $height / 100;
         return round($weight / ($heightInMeters * $heightInMeters), 1);

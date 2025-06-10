@@ -6,13 +6,13 @@
                 Patients
             </h1>
             <div class="flex space-x-2">
-                <a href="{{ route('dietitian.patients.invite') }}"
+                <a href="{{ route('dietitian.patients.create') }}"
                     class="btn bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
                     <svg xmlns="http://www.w3.org/2000/svg" class="size-5 mr-2" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
-                    <span>Invite Patient</span>
+                    <span>Create New Patient</span>
                 </a>
             </div>
         </div>
@@ -247,9 +247,9 @@
                                                         d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                                                 </svg>
                                                 <p class="mt-2 text-slate-500 dark:text-navy-300">No patients found</p>
-                                                <a href="{{ route('dietitian.patients.invite') }}"
+                                                <a href="{{ route('dietitian.patients.create') }}"
                                                     class="btn mt-4 bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
-                                                    Invite Your First Patient
+                                                    Create New Patient
                                                 </a>
                                             </div>
                                         </td>
