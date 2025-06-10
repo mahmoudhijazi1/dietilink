@@ -12,6 +12,15 @@ class ProgressEntry extends Model
         'patient_id',
         'weight',
         'measurements',
+        'chest',
+        'left_arm',
+        'right_arm',
+        'waist',
+        'hips',
+        'left_thigh',
+        'right_thigh',
+        'fat_mass',
+        'muscle_mass',
         'notes',
         'measurement_date',
     ];
@@ -24,6 +33,11 @@ class ProgressEntry extends Model
     public function patient()
     {
         return $this->belongsTo(Patient::class);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(ProgressImage::class);
     }
 
     protected static function boot()
