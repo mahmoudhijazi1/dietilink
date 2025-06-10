@@ -42,153 +42,239 @@
         @endif
 
         <div class="grid grid-cols-12 gap-4 sm:gap-5 lg:gap-6">
-            <!-- Patient Info Card -->
+            <!-- Enhanced Patient Info Card -->
             <div class="col-span-12 lg:col-span-4">
                 <div class="card p-4 sm:p-5">
-                    <div class="flex items-center space-x-4">
-                        <div class="avatar size-20">
-                            <div class="is-initial rounded-full bg-info text-2xl uppercase text-white">
-                                {{ substr($patient->user->name, 0, 1) }}
-                            </div>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-medium text-slate-700 dark:text-navy-100">
-                                {{ $patient->user->name }}
-                            </h3>
-                            <p class="text-xs+">
-                                @if($patient->user->status === 'active')
-                                    <span class="text-success">Active Patient</span>
-                                @elseif($patient->user->status === 'invited')
-                                    <span class="text-warning">Invitation Pending</span>
-                                @else
-                                    <span class="text-error">{{ ucfirst($patient->user->status) }}</span>
-                                @endif
-                            </p>
+                <div class="flex items-center space-x-4">
+                    <div class="avatar size-20">
+                        <div class="is-initial rounded-full bg-info text-2xl uppercase text-white">
+                            {{ substr($patient->user->name, 0, 1) }}
                         </div>
                     </div>
-                    <div class="mt-6 space-y-4">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                </svg>
-                                <span class="font-medium">Email</span>
-                            </div>
-                            <span>{{ $patient->user->email }}</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                                </svg>
-                                <span class="font-medium">Phone</span>
-                            </div>
-                            <span>{{ $patient->phone ?? 'Not provided' }}</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                                <span class="font-medium">Gender</span>
-                            </div>
-                            <span>{{ $patient->gender ? ucfirst($patient->gender) : 'Not specified' }}</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                                </svg>
-                                <span class="font-medium">Status</span>
-                            </div>
+                    <div>
+                        <h3 class="text-lg font-medium text-slate-700 dark:text-navy-100">
+                            {{ $patient->user->name }}
+                        </h3>
+                        <p class="text-xs+ space-x-2">
                             @if($patient->user->status === 'active')
-                                <div class="badge bg-success/10 text-success dark:bg-success/15">Active</div>
+                                <span class="text-success">Active Patient</span>
                             @elseif($patient->user->status === 'invited')
-                                <div class="badge bg-warning/10 text-warning dark:bg-warning/15">Invited</div>
+                                <span class="text-warning">Invitation Pending</span>
                             @else
-                                <div class="badge bg-error/10 text-error dark:bg-error/15">{{ ucfirst($patient->user->status) }}</div>
+                                <span class="text-error">{{ ucfirst($patient->user->status) }}</span>
                             @endif
-                        </div>
-                        <div class="my-3 h-px bg-slate-200 dark:bg-navy-500"></div>
-                        
-                        <!-- Weight & Height Information -->
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-                                </svg>
-                                <span class="font-medium">Height</span>
-                            </div>
-                            <span>{{ $patient->height ?? 'Not recorded' }} {{ $patient->height ? 'cm' : '' }}</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span class="font-medium">Initial Weight</span>
-                            </div>
-                            <span>{{ $patient->initial_weight ?? 'Not recorded' }} {{ $patient->initial_weight ? 'kg' : '' }}</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                </svg>
-                                <span class="font-medium">Goal Weight</span>
-                            </div>
-                            <span>{{ $patient->goal_weight ?? 'Not set' }} {{ $patient->goal_weight ? 'kg' : '' }}</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                                </svg>
-                                <span class="font-medium">Activity Level</span>
-                            </div>
-                            <span>{{ $patient->activity_level ?? 'Not specified' }}</span>
-                        </div>
-                    </div>
-                    <div class="mt-6 flex justify-center space-x-2">
-                        <a href="{{ route('dietitian.patients.edit', $patient->id) }}"
-                            class="btn min-w-[7rem] rounded-full border border-slate-300 font-medium text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                            Edit Profile
-                        </a>
-                        <button onclick="confirmDelete({{ $patient->id }})"
-                            class="btn min-w-[7rem] rounded-full bg-error font-medium text-white hover:bg-error-focus focus:bg-error-focus active:bg-error-focus/90">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                            Delete
-                        </button>
+                            
+                            @if($patient->birth_date)
+                                <span class="text-slate-500">•</span>
+                                <span class="text-slate-600 dark:text-navy-300">
+                                    {{ \Carbon\Carbon::parse($patient->birth_date)->age }} years
+                                </span>
+                            @endif
+                        </p>
                     </div>
                 </div>
-            </div>
 
-            <!-- Tabs Section -->
-            <div class="col-span-12 lg:col-span-8">
-                <div class="card" x-data="{activeTab:'mealPlansTab'}">
-                    <div class="flex flex-col items-center space-y-4 border-b border-slate-200 p-4 dark:border-navy-500 sm:flex-row sm:justify-between sm:space-y-0 sm:px-5">
-                        <h2 class="text-lg font-medium tracking-wide text-slate-700 dark:text-navy-100">
-                            Patient Information
-                        </h2>
-                        <div class="flex justify-center space-x-2">
-                            <button @click="activeTab = 'mealPlansTab'" class="btn min-w-[7rem] rounded-full" :class="activeTab === 'mealPlansTab' ? 'bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90' : 'border border-slate-300 font-medium text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90'">
-                                Meal Plans
-                            </button>
-                            <button @click="activeTab = 'progressTab'" class="btn min-w-[7rem] rounded-full" :class="activeTab === 'progressTab' ? 'bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90' : 'border border-slate-300 font-medium text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90'">
-                                Progress
-                            </button>
-                            <button @click="activeTab = 'medicalTab'" class="btn min-w-[7rem] rounded-full" :class="activeTab === 'medicalTab' ? 'bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90' : 'border border-slate-300 font-medium text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90'">
-                                Medical Info
-                            </button>
-                            <button @click="activeTab = 'notesTab'" class="btn min-w-[7rem] rounded-full" :class="activeTab === 'notesTab' ? 'bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90' : 'border border-slate-300 font-medium text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90'">
-                                Notes
-                            </button>
+                <div class="mt-6 space-y-4">
+                    <!-- Contact Information -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            <span class="font-medium">Email</span>
                         </div>
+                        <span class="text-sm">{{ $patient->user->email }}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            </svg>
+                            <span class="font-medium">Phone</span>
+                        </div>
+                        <span class="text-sm">{{ $patient->phone ?? 'Not provided' }}</span>
+                    </div>
+
+                    <!-- Personal Info -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <span class="font-medium">Gender</span>
+                        </div>
+                        <span class="text-sm">{{ $patient->gender ? ucfirst($patient->gender) : 'Not specified' }}</span>
+                    </div>
+                    
+                    @if($patient->occupation)
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6.344M16 6H8m8 0l2 2-2 2m-8-4l-2 2 2 2"/>
+                            </svg>
+                            <span class="font-medium">Occupation</span>
+                        </div>
+                        <span class="text-sm">{{ $patient->occupation }}</span>
+                    </div>
+                    @endif
+
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                            </svg>
+                            <span class="font-medium">Status</span>
+                        </div>
+                        @if($patient->user->status === 'active')
+                            <div class="badge bg-success/10 text-success dark:bg-success/15">Active</div>
+                        @elseif($patient->user->status === 'invited')
+                            <div class="badge bg-warning/10 text-warning dark:bg-warning/15">Invited</div>
+                        @else
+                            <div class="badge bg-error/10 text-error dark:bg-error/15">{{ ucfirst($patient->user->status) }}</div>
+                        @endif
+                    </div>
+
+                    <div class="my-3 h-px bg-slate-200 dark:bg-navy-500"></div>
+                    
+                    <!-- Physical Measurements -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                            </svg>
+                            <span class="font-medium">Height</span>
+                        </div>
+                        <span class="text-sm">{{ $patient->height ?? 'Not recorded' }} {{ $patient->height ? 'cm' : '' }}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span class="font-medium">Initial Weight</span>
+                        </div>
+                        <span class="text-sm">{{ $patient->initial_weight ?? 'Not recorded' }} {{ $patient->initial_weight ? 'kg' : '' }}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            <span class="font-medium">Goal Weight</span>
+                        </div>
+                        <span class="text-sm">{{ $patient->goal_weight ?? 'Not set' }} {{ $patient->goal_weight ? 'kg' : '' }}</span>
+                    </div>
+
+                    <!-- BMI Calculation -->
+                    @if($patient->height && $patient->initial_weight)
+                    @php
+                        $heightInMeters = $patient->height / 100;
+                        $bmi = round($patient->initial_weight / ($heightInMeters * $heightInMeters), 1);
+                        $bmiCategory = '';
+                        $bmiColor = '';
+                        if ($bmi < 18.5) {
+                            $bmiCategory = 'Underweight';
+                            $bmiColor = 'text-blue-600';
+                        } elseif ($bmi < 25) {
+                            $bmiCategory = 'Normal';
+                            $bmiColor = 'text-success';
+                        } elseif ($bmi < 30) {
+                            $bmiCategory = 'Overweight';
+                            $bmiColor = 'text-warning';
+                        } else {
+                            $bmiCategory = 'Obese';
+                            $bmiColor = 'text-error';
+                        }
+                    @endphp
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            <span class="font-medium">BMI</span>
+                        </div>
+                        <span class="text-sm">
+                            <span class="font-medium">{{ $bmi }}</span>
+                            <span class="{{ $bmiColor }} ml-1">({{ $bmiCategory }})</span>
+                        </span>
+                    </div>
+                    @endif
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                            </svg>
+                            <span class="font-medium">Activity Level</span>
+                        </div>
+                        <span class="text-sm">{{ $patient->activity_level ? ucfirst(str_replace('_', ' ', $patient->activity_level)) : 'Not specified' }}</span>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="mt-6 flex justify-center space-x-2">
+                    <a href="{{ route('dietitian.patients.edit', $patient->id) }}"
+                        class="btn min-w-[7rem] rounded-full border border-slate-300 font-medium text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        Edit Profile
+                    </a>
+                    <button onclick="confirmDelete({{ $patient->id }})"
+                        class="btn min-w-[7rem] rounded-full bg-error font-medium text-white hover:bg-error-focus focus:bg-error-focus active:bg-error-focus/90">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+
+<!-- Updated Tabs Section with New Medical History Tab -->
+<div class="col-span-12 lg:col-span-8">
+    <div class="card" x-data="{activeTab:'mealPlansTab'}">
+        <div class="flex flex-col items-center space-y-4 border-b border-slate-200 p-4 dark:border-navy-500 sm:flex-row sm:justify-between sm:space-y-0 sm:px-5">
+            <h2 class="text-lg font-medium tracking-wide text-slate-700 dark:text-navy-100">
+                Patient Information
+            </h2>
+            <!-- Responsive tab buttons -->
+            <div class="w-full sm:w-auto overflow-x-auto">
+                <div class="flex justify-center sm:justify-end gap-2 min-w-max px-2 sm:px-0">
+                    <button @click="activeTab = 'mealPlansTab'" 
+                            class="btn min-w-[5rem] sm:min-w-[6rem] rounded-full text-xs sm:text-sm flex-shrink-0" 
+                            :class="activeTab === 'mealPlansTab' ? 'bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90' : 'border border-slate-300 font-medium text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90'">
+                        <span class="hidden sm:inline">Meal Plans</span>
+                        <span class="sm:hidden">Meals</span>
+                    </button>
+                    <button @click="activeTab = 'progressTab'" 
+                            class="btn min-w-[5rem] sm:min-w-[6rem] rounded-full text-xs sm:text-sm flex-shrink-0" 
+                            :class="activeTab === 'progressTab' ? 'bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90' : 'border border-slate-300 font-medium text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90'">
+                        Progress
+                    </button>
+                    <button @click="activeTab = 'medicalTab'" 
+                            class="btn min-w-[5rem] sm:min-w-[6rem] rounded-full text-xs sm:text-sm flex-shrink-0" 
+                            :class="activeTab === 'medicalTab' ? 'bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90' : 'border border-slate-300 font-medium text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90'">
+                        <span class="hidden sm:inline">Medical</span>
+                        <span class="sm:hidden">Med</span>
+                    </button>
+                    <button @click="activeTab = 'foodHistoryTab'" 
+                            class="btn min-w-[5rem] sm:min-w-[6rem] rounded-full text-xs sm:text-sm flex-shrink-0" 
+                            :class="activeTab === 'foodHistoryTab' ? 'bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90' : 'border border-slate-300 font-medium text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90'">
+                        <span class="hidden sm:inline">Food History</span>
+                        <span class="sm:hidden">Food</span>
+                    </button>
+                    <button @click="activeTab = 'notesTab'" 
+                            class="btn min-w-[5rem] sm:min-w-[6rem] rounded-full text-xs sm:text-sm flex-shrink-0" 
+                            :class="activeTab === 'notesTab' ? 'bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90' : 'border border-slate-300 font-medium text-slate-700 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90'">
+                        Notes
+                    </button>
+                </div>
+            </div>
+        
                     </div>
 
                     <!-- Meal Plans Tab -->
@@ -486,46 +572,357 @@
                         </div>
                     </div>
 
-                    <!-- Medical Info Tab -->
+                    <!-- Enhanced Medical Info Tab -->
                     <div x-show="activeTab === 'medicalTab'" class="p-4 sm:p-5" style="display: none;">
-                        <div class="space-y-5">
+                        <div class="flex items-center space-x-3 mb-6">
+                            <div class="flex items-center justify-center size-10 rounded-full bg-red-100 text-red-600 dark:bg-red-900/30">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                            </div>
                             <div>
-                                <h3 class="text-base font-medium text-slate-700 dark:text-navy-100">
-                                    Medical Conditions
-                                </h3>
-                                <div class="mt-2 rounded-lg border border-slate-300 p-3 dark:border-navy-450">
-                                    @if($patient->medical_conditions)
-                                        <p>{{ $patient->medical_conditions }}</p>
-                                    @else
-                                        <p class="text-slate-500 dark:text-navy-300 italic">No medical conditions recorded</p>
-                                    @endif
+                                <h3 class="text-lg font-semibold text-slate-800 dark:text-navy-50">Medical History</h3>
+                                <p class="text-sm text-slate-500 dark:text-navy-300">Complete medical background and health information</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Left Column -->
+                            <div class="space-y-6">
+                                <!-- Chronic Diseases -->
+                                <div>
+                                    <h4 class="text-base font-medium text-slate-700 dark:text-navy-100 mb-3 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                        </svg>
+                                        Chronic Diseases
+                                    </h4>
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50/50 p-4 dark:border-navy-500 dark:bg-navy-600/25">
+                                        @if($patient->medical_conditions)
+                                            <p class="text-sm leading-relaxed">{{ $patient->medical_conditions }}</p>
+                                        @else
+                                            <p class="text-slate-500 dark:text-navy-300 italic text-sm">No chronic diseases recorded</p>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <!-- Current Medications -->
+                                <div>
+                                    <h4 class="text-base font-medium text-slate-700 dark:text-navy-100 mb-3 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                                        </svg>
+                                        Current Medications
+                                    </h4>
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50/50 p-4 dark:border-navy-500 dark:bg-navy-600/25">
+                                        @if($patient->medications)
+                                            <p class="text-sm leading-relaxed">{{ $patient->medications }}</p>
+                                        @else
+                                            <p class="text-slate-500 dark:text-navy-300 italic text-sm">No medications recorded</p>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <!-- Previous Surgeries -->
+                                <div>
+                                    <h4 class="text-base font-medium text-slate-700 dark:text-navy-100 mb-3 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                                        </svg>
+                                        Previous Surgeries
+                                    </h4>
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50/50 p-4 dark:border-navy-500 dark:bg-navy-600/25">
+                                        @if($patient->surgeries)
+                                            <p class="text-sm leading-relaxed">{{ $patient->surgeries }}</p>
+                                        @else
+                                            <p class="text-slate-500 dark:text-navy-300 italic text-sm">No surgeries recorded</p>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <!-- Food Allergies -->
+                                <div>
+                                    <h4 class="text-base font-medium text-slate-700 dark:text-navy-100 mb-3 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                        </svg>
+                                        Food Allergies & Intolerances
+                                    </h4>
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50/50 p-4 dark:border-navy-500 dark:bg-navy-600/25">
+                                        @if($patient->allergies)
+                                            <p class="text-sm leading-relaxed">{{ $patient->allergies }}</p>
+                                        @else
+                                            <p class="text-slate-500 dark:text-navy-300 italic text-sm">No allergies recorded</p>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
-                            
-                            <div>
-                                <h3 class="text-base font-medium text-slate-700 dark:text-navy-100">
-                                    Allergies
-                                </h3>
-                                <div class="mt-2 rounded-lg border border-slate-300 p-3 dark:border-navy-450">
-                                    @if($patient->allergies)
-                                        <p>{{ $patient->allergies }}</p>
-                                    @else
-                                        <p class="text-slate-500 dark:text-navy-300 italic">No allergies recorded</p>
-                                    @endif
+
+                            <!-- Right Column -->
+                            <div class="space-y-6">
+                                <!-- Smoking Status -->
+                                <div>
+                                    <h4 class="text-base font-medium text-slate-700 dark:text-navy-100 mb-3 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                                        </svg>
+                                        Smoking Status
+                                    </h4>
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50/50 p-4 dark:border-navy-500 dark:bg-navy-600/25">
+                                        @if($patient->smoking_status)
+                                            <p class="text-sm leading-relaxed">{{ $patient->smoking_status }}</p>
+                                        @else
+                                            <p class="text-slate-500 dark:text-navy-300 italic text-sm">No smoking information recorded</p>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <!-- GI Symptoms -->
+                                <div>
+                                    <h4 class="text-base font-medium text-slate-700 dark:text-navy-100 mb-3 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                        </svg>
+                                        Gastrointestinal Symptoms
+                                    </h4>
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50/50 p-4 dark:border-navy-500 dark:bg-navy-600/25">
+                                        @if($patient->gi_symptoms)
+                                            <p class="text-sm leading-relaxed">{{ $patient->gi_symptoms }}</p>
+                                        @else
+                                            <p class="text-slate-500 dark:text-navy-300 italic text-sm">No GI symptoms recorded</p>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <!-- Recent Blood Tests -->
+                                <div>
+                                    <h4 class="text-base font-medium text-slate-700 dark:text-navy-100 mb-3 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                        Recent Blood Tests
+                                    </h4>
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50/50 p-4 dark:border-navy-500 dark:bg-navy-600/25">
+                                        @if($patient->recent_blood_test)
+                                            <p class="text-sm leading-relaxed">{{ $patient->recent_blood_test }}</p>
+                                        @else
+                                            <p class="text-slate-500 dark:text-navy-300 italic text-sm">No recent blood test results recorded</p>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <!-- Dietary Preferences -->
+                                <div>
+                                    <h4 class="text-base font-medium text-slate-700 dark:text-navy-100 mb-3 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                        </svg>
+                                        Dietary Preferences
+                                    </h4>
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50/50 p-4 dark:border-navy-500 dark:bg-navy-600/25">
+                                        @if($patient->dietary_preferences)
+                                            <p class="text-sm leading-relaxed">{{ $patient->dietary_preferences }}</p>
+                                        @else
+                                            <p class="text-slate-500 dark:text-navy-300 italic text-sm">No dietary preferences recorded</p>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
-                            
+                        </div>
+                    </div>
+
+                    <!-- New Food History Tab -->
+                    <div x-show="activeTab === 'foodHistoryTab'" class="p-4 sm:p-5" style="display: none;">
+                        <div class="flex items-center space-x-3 mb-6">
+                            <div class="flex items-center justify-center size-10 rounded-full bg-green-100 text-green-600 dark:bg-green-900/30">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 002 2h1a2 2 0 002-2v-6"/>
+                                </svg>
+                            </div>
                             <div>
-                                <h3 class="text-base font-medium text-slate-700 dark:text-navy-100">
-                                    Dietary Preferences
-                                </h3>
-                                <div class="mt-2 rounded-lg border border-slate-300 p-3 dark:border-navy-450">
-                                    @if($patient->dietary_preferences)
-                                        <p>{{ $patient->dietary_preferences }}</p>
-                                    @else
-                                        <p class="text-slate-500 dark:text-navy-300 italic">No dietary preferences recorded</p>
-                                    @endif
+                                <h3 class="text-lg font-semibold text-slate-800 dark:text-navy-50">Food History & Lifestyle</h3>
+                                <p class="text-sm text-slate-500 dark:text-navy-300">Dietary habits, lifestyle patterns, and nutrition background</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Left Column - Daily Habits -->
+                            <div class="space-y-6">
+                                <div class="bg-blue-50 dark:bg-navy-600/25 rounded-lg p-4 border border-blue-200 dark:border-navy-500">
+                                    <h4 class="text-base font-semibold text-blue-800 dark:text-blue-300 mb-4 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Daily Habits
+                                    </h4>
+                                    
+                                    <!-- Daily Routine -->
+                                    <div class="mb-4">
+                                        <h5 class="text-sm font-medium text-slate-700 dark:text-navy-100 mb-2">Daily Eating Routine</h5>
+                                        <div class="rounded-lg border border-slate-200 bg-white/50 p-3 dark:border-navy-500 dark:bg-navy-700/25">
+                                            @if($patient->daily_routine)
+                                                <p class="text-sm leading-relaxed">{{ $patient->daily_routine }}</p>
+                                            @else
+                                                <p class="text-slate-500 dark:text-navy-300 italic text-sm">No daily routine recorded</p>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <!-- Alcohol Intake -->
+                                    <div class="mb-4">
+                                        <h5 class="text-sm font-medium text-slate-700 dark:text-navy-100 mb-2">Alcohol Intake</h5>
+                                        <div class="rounded-lg border border-slate-200 bg-white/50 p-3 dark:border-navy-500 dark:bg-navy-700/25">
+                                            @if($patient->alcohol_intake)
+                                                <p class="text-sm leading-relaxed">{{ $patient->alcohol_intake }}</p>
+                                            @else
+                                                <p class="text-slate-500 dark:text-navy-300 italic text-sm">No alcohol information recorded</p>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <!-- Coffee Intake -->
+                                    <div>
+                                        <h5 class="text-sm font-medium text-slate-700 dark:text-navy-100 mb-2">Coffee Intake</h5>
+                                        <div class="rounded-lg border border-slate-200 bg-white/50 p-3 dark:border-navy-500 dark:bg-navy-700/25">
+                                            @if($patient->coffee_intake)
+                                                <p class="text-sm leading-relaxed">{{ $patient->coffee_intake }}</p>
+                                            @else
+                                                <p class="text-slate-500 dark:text-navy-300 italic text-sm">No coffee information recorded</p>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <!-- Supplements -->
+                                <div>
+                                    <h4 class="text-base font-medium text-slate-700 dark:text-navy-100 mb-3 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                                        </svg>
+                                        Vitamins & Supplements
+                                    </h4>
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50/50 p-4 dark:border-navy-500 dark:bg-navy-600/25">
+                                        @if($patient->vitamin_intake)
+                                            <p class="text-sm leading-relaxed">{{ $patient->vitamin_intake }}</p>
+                                        @else
+                                            <p class="text-slate-500 dark:text-navy-300 italic text-sm">No vitamins or supplements recorded</p>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <!-- Physical Activity -->
+                                <div>
+                                    <h4 class="text-base font-medium text-slate-700 dark:text-navy-100 mb-3 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                        </svg>
+                                        Physical Activity Details
+                                    </h4>
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50/50 p-4 dark:border-navy-500 dark:bg-navy-600/25">
+                                        @if($patient->physical_activity_details)
+                                            <p class="text-sm leading-relaxed">{{ $patient->physical_activity_details }}</p>
+                                        @else
+                                            <p class="text-slate-500 dark:text-navy-300 italic text-sm">No detailed physical activity information recorded</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column - History & Goals -->
+                            <div class="space-y-6">
+                                <!-- Previous Diets -->
+                                <div>
+                                    <h4 class="text-base font-medium text-slate-700 dark:text-navy-100 mb-3 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                        Previous Diet Attempts
+                                    </h4>
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50/50 p-4 dark:border-navy-500 dark:bg-navy-600/25">
+                                        @if($patient->previous_diets)
+                                            <p class="text-sm leading-relaxed">{{ $patient->previous_diets }}</p>
+                                        @else
+                                            <p class="text-slate-500 dark:text-navy-300 italic text-sm">No previous diet information recorded</p>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <!-- Weight History -->
+                                <div>
+                                    <h4 class="text-base font-medium text-slate-700 dark:text-navy-100 mb-3 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                        </svg>
+                                        Weight History (Last 5 Years)
+                                    </h4>
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50/50 p-4 dark:border-navy-500 dark:bg-navy-600/25">
+                                        @if($patient->weight_history)
+                                            <p class="text-sm leading-relaxed">{{ $patient->weight_history }}</p>
+                                        @else
+                                            <p class="text-slate-500 dark:text-navy-300 italic text-sm">No weight history recorded</p>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <!-- Goals & Motivation -->
+                                <div class="bg-emerald-50 dark:bg-emerald-900/25 rounded-lg p-4 border border-emerald-200 dark:border-emerald-700/50">
+                                    <h4 class="text-base font-semibold text-emerald-800 dark:text-emerald-300 mb-3 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                                        </svg>
+                                        Goals & Motivation
+                                    </h4>
+                                    <div class="rounded-lg border border-emerald-200 bg-white/50 p-3 dark:border-emerald-600/50 dark:bg-emerald-900/25">
+                                        @if($patient->subscription_reason)
+                                            <p class="text-sm leading-relaxed">{{ $patient->subscription_reason }}</p>
+                                        @else
+                                            <p class="text-slate-500 dark:text-navy-300 italic text-sm">No goals or motivation recorded</p>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <!-- Quick Stats Summary -->
+                                @if($patient->height || $patient->initial_weight || $patient->goal_weight)
+                                <div class="bg-slate-100 dark:bg-navy-600/50 rounded-lg p-4">
+                                    <h4 class="text-base font-medium text-slate-700 dark:text-navy-100 mb-3 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                        </svg>
+                                        Quick Physical Summary
+                                    </h4>
+                                    <div class="grid grid-cols-2 gap-3 text-sm">
+                                        @if($patient->height)
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-600 dark:text-navy-300">Height:</span>
+                                            <span class="font-medium">{{ $patient->height }} cm</span>
+                                        </div>
+                                        @endif
+                                        @if($patient->initial_weight)
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-600 dark:text-navy-300">Initial:</span>
+                                            <span class="font-medium">{{ $patient->initial_weight }} kg</span>
+                                        </div>
+                                        @endif
+                                        @if($patient->goal_weight)
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-600 dark:text-navy-300">Goal:</span>
+                                            <span class="font-medium text-primary">{{ $patient->goal_weight }} kg</span>
+                                        </div>
+                                        @endif
+                                        @if($patient->height && $patient->initial_weight && $patient->goal_weight)
+                                        @php
+                                            $weightDiff = $patient->initial_weight - $patient->goal_weight;
+                                        @endphp
+                                        <div class="flex justify-between col-span-2 pt-2 border-t border-slate-200 dark:border-navy-500">
+                                            <span class="text-slate-600 dark:text-navy-300">Target </span>
+                                            <span class="font-medium {{ $weightDiff > 0 ? 'text-success' : 'text-warning' }}">
+                                                {{ abs($weightDiff) }} kg {{ $weightDiff > 0 ? 'loss' : 'gain' }}
+                                            </span>
+                                        </div>
+                                        @endif
+                                    </div>
+                                </div>
+                                @endif
                             </div>
                         </div>
                     </div>

@@ -24,7 +24,8 @@ class PatientController extends Controller
                 $query->where('name', 'LIKE', "%{$search}%")
                     ->orWhere('email', 'LIKE', "%{$search}%");
             })
-                ->orWhere('phone', 'LIKE', "%{$search}%");
+                ->orWhere('phone', 'LIKE', "%{$search}%")
+                ->orWhere('occupation', 'LIKE', "%{$search}%");
         }
 
         $patients = $patientsQuery->latest()->paginate(10);
@@ -36,21 +37,21 @@ class PatientController extends Controller
         return view('dietitian.patients.index', compact('patients', 'search'));
     }
 
-public function show($id)
-{
-    $patient = Patient::with([
-        'user',
-        'progressEntries' => function ($query) {
-            $query->latest();
-        },
-        'mealPlans' => function ($query) {
-            $query->with(['meals.mealItems.foodItem'])->latest();
-        }
-    ])
-        ->findOrFail($id);
+    public function show($id)
+    {
+        $patient = Patient::with([
+            'user',
+            'progressEntries' => function ($query) {
+                $query->latest();
+            },
+            'mealPlans' => function ($query) {
+                $query->with(['meals.mealItems.foodItem'])->latest();
+            }
+        ])
+            ->findOrFail($id);
 
-    return view('dietitian.patients.show', compact('patient'));
-}
+        return view('dietitian.patients.show', compact('patient'));
+    }
 
     /**
      * Show invite form for new patient
@@ -120,16 +121,39 @@ public function show($id)
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $patient->user_id,
-            'height' => 'nullable|numeric',
-            'initial_weight' => 'nullable|numeric',
-            'goal_weight' => 'nullable|numeric',
-            'activity_level' => 'nullable|string',
+            'phone' => 'nullable|string|max:20',
+            'gender' => 'nullable|string|in:male,female,other',
+            'occupation' => 'nullable|string|max:255',
+            'birth_date' => 'nullable|date|before:today',
+            
+            // Physical measurements
+            'height' => 'nullable|numeric|min:50|max:300',
+            'initial_weight' => 'nullable|numeric|min:20|max:500',
+            'goal_weight' => 'nullable|numeric|min:20|max:500',
+            'activity_level' => 'nullable|string|max:255',
+            
+            // Medical history
             'medical_conditions' => 'nullable|string',
+            'medications' => 'nullable|string',
+            'surgeries' => 'nullable|string',
+            'smoking_status' => 'nullable|string',
+            'gi_symptoms' => 'nullable|string',
+            'recent_blood_test' => 'nullable|string',
             'allergies' => 'nullable|string',
+            
+            // Food history
             'dietary_preferences' => 'nullable|string',
+            'alcohol_intake' => 'nullable|string',
+            'coffee_intake' => 'nullable|string',
+            'vitamin_intake' => 'nullable|string',
+            'daily_routine' => 'nullable|string',
+            'physical_activity_details' => 'nullable|string',
+            'previous_diets' => 'nullable|string',
+            'weight_history' => 'nullable|string',
+            'subscription_reason' => 'nullable|string',
+            
+            // Notes
             'notes' => 'nullable|string',
-            'phone' => 'nullable|string',
-            'gender' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -146,16 +170,39 @@ public function show($id)
 
         // Update patient information
         $patient->update([
+            'phone' => $request->phone,
+            'gender' => $request->gender,
+            'occupation' => $request->occupation,
+            'birth_date' => $request->birth_date,
+            
+            // Physical measurements
             'height' => $request->height,
             'initial_weight' => $request->initial_weight,
             'goal_weight' => $request->goal_weight,
             'activity_level' => $request->activity_level,
+            
+            // Medical history
             'medical_conditions' => $request->medical_conditions,
+            'medications' => $request->medications,
+            'surgeries' => $request->surgeries,
+            'smoking_status' => $request->smoking_status,
+            'gi_symptoms' => $request->gi_symptoms,
+            'recent_blood_test' => $request->recent_blood_test,
             'allergies' => $request->allergies,
+            
+            // Food history
             'dietary_preferences' => $request->dietary_preferences,
+            'alcohol_intake' => $request->alcohol_intake,
+            'coffee_intake' => $request->coffee_intake,
+            'vitamin_intake' => $request->vitamin_intake,
+            'daily_routine' => $request->daily_routine,
+            'physical_activity_details' => $request->physical_activity_details,
+            'previous_diets' => $request->previous_diets,
+            'weight_history' => $request->weight_history,
+            'subscription_reason' => $request->subscription_reason,
+            
+            // Notes
             'notes' => $request->notes,
-            'phone' => $request->phone,
-            'gender' => $request->gender,
         ]);
 
         return redirect()->route('dietitian.patients.show', $patient->id)
@@ -179,7 +226,31 @@ public function show($id)
         return redirect()->route('dietitian.patients.index')
             ->with('success', 'Patient deleted successfully!');
     }
+
+    /**
+     * Calculate patient age from birth_date
+     */
+    private function calculateAge($birthDate)
+    {
+        if (!$birthDate) return null;
+        
+        return \Carbon\Carbon::parse($birthDate)->age;
+    }
+
+    /**
+     * Calculate BMI if height and weight are available
+     */
+    private function calculateBMI($height, $weight)
+    {
+        if (!$height || !$weight) return null;
+        
+        // Convert height from cm to meters
+        $heightInMeters = $height / 100;
+        return round($weight / ($heightInMeters * $heightInMeters), 1);
+    }
+
     public function sendInviteEmail(Request $request)
     {
+        // Implementation for sending invitation emails
     }
 }

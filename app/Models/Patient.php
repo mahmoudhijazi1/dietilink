@@ -23,7 +23,30 @@ class Patient extends Model
         'notes',
         'additional_info',
         'phone',
-        'gender'
+        'gender',
+
+        // Add these to your Patient model $fillable array:
+
+        // Personal Info
+        'occupation',
+        'birth_date',
+
+        // Medical History  
+        'medications',
+        'surgeries',
+        'smoking_status',
+        'gi_symptoms',
+        'recent_blood_test',
+
+        // Food History
+        'alcohol_intake',
+        'coffee_intake',
+        'vitamin_intake',
+        'daily_routine',
+        'physical_activity_details',
+        'previous_diets',
+        'weight_history',
+        'subscription_reason'
     ];
 
     protected $casts = [
@@ -40,9 +63,9 @@ class Patient extends Model
         return $this->hasMany(ProgressEntry::class);
     }
     public function mealPlans()
-{
-    return $this->hasMany(MealPlan::class);
-}
+    {
+        return $this->hasMany(MealPlan::class);
+    }
 
 
     // add boot
