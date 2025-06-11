@@ -168,40 +168,6 @@
                         <span class="text-sm">{{ $patient->goal_weight ?? 'Not set' }} {{ $patient->goal_weight ? 'kg' : '' }}</span>
                     </div>
 
-                    <!-- BMI Calculation -->
-                    @if($patient->height && $patient->initial_weight)
-                    @php
-                        $heightInMeters = $patient->height / 100;
-                        $bmi = round($patient->initial_weight / ($heightInMeters * $heightInMeters), 1);
-                        $bmiCategory = '';
-                        $bmiColor = '';
-                        if ($bmi < 18.5) {
-                            $bmiCategory = 'Underweight';
-                            $bmiColor = 'text-blue-600';
-                        } elseif ($bmi < 25) {
-                            $bmiCategory = 'Normal';
-                            $bmiColor = 'text-success';
-                        } elseif ($bmi < 30) {
-                            $bmiCategory = 'Overweight';
-                            $bmiColor = 'text-warning';
-                        } else {
-                            $bmiCategory = 'Obese';
-                            $bmiColor = 'text-error';
-                        }
-                    @endphp
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
-                            <span class="font-medium">BMI</span>
-                        </div>
-                        <span class="text-sm">
-                            <span class="font-medium">{{ $bmi }}</span>
-                            <span class="{{ $bmiColor }} ml-1">({{ $bmiCategory }})</span>
-                        </span>
-                    </div>
-                    @endif
                     
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
@@ -212,6 +178,98 @@
                         </div>
                         <span class="text-sm">{{ $patient->activity_level ? ucfirst(str_replace('_', ' ', $patient->activity_level)) : 'Not specified' }}</span>
                     </div>
+                    <!-- Enhanced BMI Calculation with Latest Weight -->
+                    @if($bmiData)
+                        <div class="flex items-center justify-between ">
+                            <div class="flex items-center space-x-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                                <span class="font-medium">Current BMI</span>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm">
+                                    <span class="font-medium">{{ $bmiData['current'] }}</span>
+                                    <span class="{{ $bmiData['color'] }} ml-1">({{ $bmiData['category'] }})</span>
+                                </div>
+                                @if($bmiData['change'])
+                                    <div class="text-xs text-slate-500 dark:text-navy-400">
+                                        @if($bmiData['change'] > 0)
+                                            <span class="text-red-500">+{{ $bmiData['change'] }}</span> from initial
+                                        @elseif($bmiData['change'] < 0)
+                                            <span class="text-green-500">{{ $bmiData['change'] }}</span> from initial
+                                        @else
+                                            No change from initial
+                                        @endif
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- BMI Comparison Card (if there's progress data) -->
+                        @if($patient->progressEntries && $patient->progressEntries->count() > 0 && $bmiData['initial'])
+                            <div class="mt-3 p-3 rounded-lg bg-slate-50/50 dark:bg-navy-600/25 border border-slate-200 dark:border-navy-500">
+                                <h5 class="text-xs font-medium text-slate-600 dark:text-navy-300 mb-2">BMI Progress</h5>
+                                <div class="grid grid-cols-3 gap-3 text-xs">
+                                    <div class="text-center">
+                                        <div class="font-medium text-slate-800 dark:text-navy-50">{{ $bmiData['initial'] }}</div>
+                                        <div class="text-slate-500 dark:text-navy-400">Initial</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="font-medium text-slate-800 dark:text-navy-50">{{ $bmiData['current'] }}</div>
+                                        <div class="text-slate-500 dark:text-navy-400">Current</div>
+                                    </div>
+                                    <div class="text-center">
+                                        @if($bmiData['change'])
+                                            <div class="font-medium {{ $bmiData['change'] < 0 ? 'text-green-600' : 'text-red-500' }}">
+                                                {{ $bmiData['change'] > 0 ? '+' : '' }}{{ $bmiData['change'] }}
+                                            </div>
+                                            <div class="text-slate-500 dark:text-navy-400">Change</div>
+                                        @else
+                                            <div class="font-medium text-slate-500">-</div>
+                                            <div class="text-slate-500 dark:text-navy-400">Change</div>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="mt-2 text-xs text-slate-600 dark:text-navy-300">
+                                    Based on current weight: {{ $bmiData['current_weight'] }} kg
+                                </div>
+                            </div>
+                        @endif
+                    @elseif($patient->height && $patient->initial_weight)
+                        <!-- Fallback to old method if no progress entries -->
+                        @php
+                            $heightInMeters = $patient->height / 100;
+                            $bmi = round($patient->initial_weight / ($heightInMeters * $heightInMeters), 1);
+                            $bmiCategory = '';
+                            $bmiColor = '';
+                            if ($bmi < 18.5) {
+                                $bmiCategory = 'Underweight';
+                                $bmiColor = 'text-blue-600';
+                            } elseif ($bmi < 25) {
+                                $bmiCategory = 'Normal';
+                                $bmiColor = 'text-success';
+                            } elseif ($bmi < 30) {
+                                $bmiCategory = 'Overweight';
+                                $bmiColor = 'text-warning';
+                            } else {
+                                $bmiCategory = 'Obese';
+                                $bmiColor = 'text-error';
+                            }
+                        @endphp
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-400 dark:text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                                <span class="font-medium">Initial BMI</span>
+                            </div>
+                            <span class="text-sm">
+                                <span class="font-medium">{{ $bmi }}</span>
+                                <span class="{{ $bmiColor }} ml-1">({{ $bmiCategory }})</span>
+                            </span>
+                        </div>
+                    @endif
                 </div>
                 
                 <!-- Action Buttons -->
@@ -440,137 +498,511 @@
                             </div>
                         @endif
                     </div>
+<!-- Progress Tab -->
+<div x-show="activeTab === 'progressTab'" class="p-4 sm:p-5" style="display: none;">
+    <div class="flex justify-between mb-5">
+        <h3 class="text-lg font-medium text-slate-700 dark:text-navy-100">
+            Progress Tracking
+        </h3>
+        <a href="{{ route('dietitian.progress.create', $patient->id) }}" class="btn bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Add Progress Entry
+        </a>
+    </div>
 
-                    <!-- Progress Tab -->
-                    <div x-show="activeTab === 'progressTab'" class="p-4 sm:p-5" style="display: none;">
-                        <div class="flex justify-between mb-5">
-                            <h3 class="text-lg font-medium text-slate-700 dark:text-navy-100">
-                                Weight Progress
-                            </h3>
-                            <a href="{{ route('dietitian.progress.create', $patient->id) }}" class="btn bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                </svg>
-                                Add Progress Entry
-                            </a>
-                        </div>
+    @if($patient->progressEntries && $patient->progressEntries->count() > 0)
+        <!-- Progress Statistics Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            @php
+                $latestEntry = $patient->progressEntries->first();
+                $firstEntry = $patient->progressEntries->last();
+                $totalWeightChange = $latestEntry->weight - $firstEntry->weight;
+                $progressCount = $patient->progressEntries->count();
+                
+                // Count entries with measurements
+                $entriesWithMeasurements = $patient->progressEntries->filter(function($entry) {
+                    return $entry->chest || $entry->waist || $entry->hips || $entry->left_arm || $entry->right_arm || $entry->left_thigh || $entry->right_thigh;
+                })->count();
+                
+                // Count entries with images
+                $entriesWithImages = $patient->progressEntries->filter(function($entry) {
+                    return $entry->progressImages && $entry->progressImages->count() > 0;
+                })->count();
+            @endphp
+            
+            <div class="card p-4">
+                <div class="flex items-center space-x-3">
+                    <div class="flex items-center justify-center size-10 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-medium text-slate-600 dark:text-navy-300">Current Weight</h4>
+                        <p class="text-lg font-semibold text-slate-800 dark:text-navy-50">{{ $latestEntry->weight }} kg</p>
+                        <p class="text-xs text-slate-500 dark:text-navy-400">{{ $latestEntry->measurement_date->format('M d') }}</p>
+                    </div>
+                </div>
+            </div>
 
-                        <!-- Progress Entries Table -->
-                        <div class="mt-5">
-                            <h3 class="text-base font-medium text-slate-700 dark:text-navy-100 mb-3">
-                                Progress History
-                            </h3>
+            <div class="card p-4">
+                <div class="flex items-center space-x-3">
+                    <div class="flex items-center justify-center size-10 rounded-full {{ $totalWeightChange >= 0 ? 'bg-red-100 text-red-600 dark:bg-red-900/30' : 'bg-green-100 text-green-600 dark:bg-green-900/30' }}">
+                        @if($totalWeightChange >= 0)
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
+                            </svg>
+                        @else
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
+                            </svg>
+                        @endif
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-medium text-slate-600 dark:text-navy-300">Total Change</h4>
+                        <p class="text-lg font-semibold {{ $totalWeightChange >= 0 ? 'text-red-600' : 'text-green-600' }}">
+                            {{ $totalWeightChange >= 0 ? '+' : '' }}{{ number_format($totalWeightChange, 1) }} kg
+                        </p>
+                        <p class="text-xs text-slate-500 dark:text-navy-400">{{ $progressCount }} entries</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-4">
+                <div class="flex items-center space-x-3">
+                    <div class="flex items-center justify-center size-10 rounded-full bg-purple-100 text-purple-600 dark:bg-purple-900/30">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-medium text-slate-600 dark:text-navy-300">Measurements</h4>
+                        <p class="text-lg font-semibold text-slate-800 dark:text-navy-50">{{ $entriesWithMeasurements }}</p>
+                        <p class="text-xs text-slate-500 dark:text-navy-400">entries tracked</p>
+                    </div>
+                </div>
+            </div>
+
+            @if($patient->goal_weight)
+            <div class="card p-4">
+                <div class="flex items-center space-x-3">
+                    @php
+                        $remaining = $latestEntry->weight - $patient->goal_weight;
+                        $isGainGoal = $patient->goal_weight > ($patient->initial_weight ?? $latestEntry->weight);
+                    @endphp
+                    <div class="flex items-center justify-center size-10 rounded-full bg-orange-100 text-orange-600 dark:bg-orange-900/30">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-medium text-slate-600 dark:text-navy-300">To Goal</h4>
+                        <p class="text-lg font-semibold text-slate-800 dark:text-navy-50">
+                            {{ abs($remaining) }} kg
+                        </p>
+                        <p class="text-xs text-slate-500 dark:text-navy-400">
+                            {{ $isGainGoal ? ($remaining < 0 ? 'to gain' : 'over goal') : ($remaining > 0 ? 'to lose' : 'achieved!') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            @else
+            <div class="card p-4">
+                <div class="flex items-center space-x-3">
+                    <div class="flex items-center justify-center size-10 rounded-full bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-medium text-slate-600 dark:text-navy-300">Progress Photos</h4>
+                        <p class="text-lg font-semibold text-slate-800 dark:text-navy-50">{{ $entriesWithImages }}</p>
+                        <p class="text-xs text-slate-500 dark:text-navy-400">with images</p>
+                    </div>
+                </div>
+            </div>
+            @endif
+        </div>
+
+        <!-- Weight Progress Chart -->
+        <div class="card mb-6">
+            <div class="border-b border-slate-200 px-4 py-4 dark:border-navy-500 sm:px-5">
+                <div class="flex items-center space-x-2">
+                    <div class="flex items-center justify-center size-7 rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-medium text-slate-700 dark:text-navy-100">Weight Progress Chart</h4>
+                </div>
+            </div>
+            <div class="p-4 sm:p-5">
+                <div style="height: 400px;">
+                    <canvas id="weightChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Entries List with Accordion Style -->
+        <div class="space-y-4" x-data="{ openEntry: null }">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-lg font-medium text-slate-700 dark:text-navy-100">Progress History</h4>
+                <div class="flex items-center space-x-2 text-xs text-slate-500 dark:text-navy-300">
+                    <span>{{ $progressCount }} entries</span>
+                    <span>•</span>
+                    <span>Latest: {{ $latestEntry->measurement_date->format('M d, Y') }}</span>
+                </div>
+            </div>
+            
+            @foreach($patient->progressEntries as $index => $entry)
+                @php
+                    $previousEntry = $patient->progressEntries->where('measurement_date', '<', $entry->measurement_date)->sortByDesc('measurement_date')->first();
+                    $weightChange = $previousEntry ? $entry->weight - $previousEntry->weight : 0;
+                    $hasMeasurements = $entry->chest || $entry->waist || $entry->hips || $entry->left_arm || $entry->right_arm || $entry->left_thigh || $entry->right_thigh;
+                    $hasComposition = $entry->fat_mass || $entry->muscle_mass;
+                    $hasImages = $entry->progressImages && $entry->progressImages->count() > 0;
+                @endphp
+                
+                <div class="card overflow-hidden">
+                    <!-- Entry Header -->
+                    <div class="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-navy-600/50 transition-colors duration-200"
+                         @click="openEntry = openEntry === {{ $index }} ? null : {{ $index }}">
+                        <div class="flex items-center space-x-4">
+                            <!-- Date Badge -->
+                            <div class="flex flex-col items-center">
+                                @if($index === 0)
+                                    <div class="size-3 rounded-full bg-primary animate-pulse mb-1"></div>
+                                @endif
+                                <div class="text-center">
+                                    <div class="text-sm font-semibold text-slate-800 dark:text-navy-50">
+                                        {{ $entry->measurement_date->format('M d') }}
+                                    </div>
+                                    <div class="text-xs text-slate-500 dark:text-navy-300">
+                                        {{ $entry->measurement_date->format('Y') }}
+                                    </div>
+                                </div>
+                            </div>
                             
-                            @if(isset($patient->progressEntries) && count($patient->progressEntries) > 0)
-                                <div class="min-w-full overflow-x-auto">
-                                    <table class="w-full text-left">
-                                        <thead>
-                                            <tr class="border-y border-transparent border-b-slate-200 dark:border-b-navy-500">
-                                                <th class="whitespace-nowrap px-3 py-3 font-semibold text-slate-800 dark:text-navy-100">
-                                                    Date
-                                                </th>
-                                                <th class="whitespace-nowrap px-3 py-3 font-semibold text-slate-800 dark:text-navy-100">
-                                                    Weight
-                                                </th>
-                                                <th class="whitespace-nowrap px-3 py-3 font-semibold text-slate-800 dark:text-navy-100">
-                                                    Change
-                                                </th>
-                                                <th class="whitespace-nowrap px-3 py-3 font-semibold text-slate-800 dark:text-navy-100">
-                                                    Measurements
-                                                </th>
-                                                <th class="whitespace-nowrap px-3 py-3 font-semibold text-slate-800 dark:text-navy-100">
-                                                    Notes
-                                                </th>
-                                                <th class="whitespace-nowrap px-3 py-3 font-semibold text-right text-slate-800 dark:text-navy-100">
-                                                    Actions
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($patient->progressEntries as $entry)
-                                            <tr class="border-y border-transparent border-b-slate-200 dark:border-b-navy-500">
-                                                <td class="whitespace-nowrap px-3 py-3">
-                                                    {{ $entry->measurement_date->format('M d, Y') }}
-                                                </td>
-                                                <td class="whitespace-nowrap px-3 py-3">
-                                                    {{ $entry->weight }} kg
-                                                </td>
-                                                <td class="whitespace-nowrap px-3 py-3">
-                                                    @php
-                                                        $previousEntry = $patient->progressEntries->where('measurement_date', '<', $entry->measurement_date)->sortByDesc('measurement_date')->first();
-                                                        $weightChange = $previousEntry ? $entry->weight - $previousEntry->weight : 0;
-                                                    @endphp
-                                                    
-                                                    @if($weightChange > 0)
-                                                        <span class="text-error">+{{ number_format($weightChange, 1) }} kg</span>
-                                                    @elseif($weightChange < 0)
-                                                        <span class="text-success">{{ number_format($weightChange, 1) }} kg</span>
-                                                    @else
-                                                        <span class="text-slate-400 dark:text-navy-300">No change</span>
-                                                    @endif
-                                                </td>
-                                                <td class="whitespace-nowrap px-3 py-3">
-                                                    @if(!empty($entry->measurements))
-                                                        <div x-data="{ showMeasurements: false }" class="cursor-pointer" @click="showMeasurements = !showMeasurements">
-                                                            <span class="text-primary hover:text-primary-focus dark:text-accent-light dark:hover:text-accent">
-                                                                <span x-show="!showMeasurements">View</span>
-                                                                <span x-show="showMeasurements" style="display: none;">Hide</span>
-                                                            </span>
-                                                            <div x-show="showMeasurements" class="absolute z-50 mt-2 rounded-lg border border-slate-150 bg-white p-4 shadow-xl dark:border-navy-600 dark:bg-navy-700" style="display: none;">
-                                                                <div class="space-y-1.5">
-                                                                    @foreach($entry->measurements as $key => $value)
-                                                                        <div class="flex justify-between">
-                                                                            <span class="font-medium">{{ ucfirst($key) }}:</span>
-                                                                            <span>{{ $value }} {{ $key === 'body_fat' ? '%' : 'cm' }}</span>
-                                                                        </div>
-                                                                    @endforeach
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    @else
-                                                        <span class="text-slate-400 dark:text-navy-300">None</span>
-                                                    @endif
-                                                </td>
-                                                <td class="whitespace-nowrap px-3 py-3">
-                                                    <p class="line-clamp-1 w-48">{{ $entry->notes ?? 'No notes' }}</p>
-                                                </td>
-                                                <td class="whitespace-nowrap px-3 py-3 text-right">
-                                                    <div class="flex justify-end space-x-2">
-                                                        <a href="{{ route('dietitian.progress.edit', ['patient' => $patient->id, 'progress' => $entry->id]) }}" class="btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                            </svg>
-                                                        </a>
-                                                        <form method="POST" action="{{ route('dietitian.progress.destroy', ['patient' => $patient->id, 'progress' => $entry->id]) }}" 
-                                                            onsubmit="return confirm('Are you sure you want to delete this progress entry?');" class="inline">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                                </svg>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                            <!-- Weight Info -->
+                            <div class="flex items-center space-x-4">
+                                <div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-2xl font-bold text-slate-800 dark:text-navy-50">{{ $entry->weight }}</span>
+                                        <span class="text-sm text-slate-500 dark:text-navy-300">kg</span>
+                                        @if($index === 0)
+                                            <span class="badge bg-primary/10 text-primary text-xs">Latest</span>
+                                        @endif
+                                    </div>
+                                    
+                                    @if($weightChange != 0)
+                                        <div class="flex items-center space-x-1 mt-1">
+                                            @if($weightChange > 0)
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="size-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
+                                                </svg>
+                                                <span class="text-xs text-red-600 font-medium">+{{ number_format($weightChange, 1) }} kg</span>
+                                            @else
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="size-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
+                                                </svg>
+                                                <span class="text-xs text-green-600 font-medium">{{ number_format($weightChange, 1) }} kg</span>
+                                            @endif
+                                        </div>
+                                    @endif
                                 </div>
-                            @else
-                                <div class="flex flex-col items-center justify-center py-8">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-16 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </div>
+                            
+                            <!-- Quick Stats -->
+                            <div class="hidden sm:flex items-center space-x-3">
+                                @if($hasMeasurements)
+                                    <div class="flex items-center space-x-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                        </svg>
+                                        <span class="text-xs text-slate-600 dark:text-navy-300">Measurements</span>
+                                    </div>
+                                @endif
+                                
+                                @if($hasComposition)
+                                    <div class="flex items-center space-x-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                        </svg>
+                                        <span class="text-xs text-slate-600 dark:text-navy-300">Composition</span>
+                                    </div>
+                                @endif
+                                
+                                @if($hasImages)
+                                    <div class="flex items-center space-x-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                        <span class="text-xs text-slate-600 dark:text-navy-300">{{ $entry->progressImages->count() }} photos</span>
+                                    </div>
+                                @endif
+                                
+                                @if($entry->notes)
+                                    <div class="flex items-center space-x-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                        <span class="text-xs text-slate-600 dark:text-navy-300">Notes</span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                            <!-- Time Ago -->
+                            <div class="text-xs text-slate-500 dark:text-navy-300 text-right hidden sm:block">
+                                {{ $entry->measurement_date->diffForHumans() }}
+                            </div>
+                            
+                            <!-- Actions -->
+                            <div class="flex items-center space-x-1">
+                                <a href="{{ route('dietitian.progress.edit', ['patient' => $patient->id, 'progress' => $entry->id]) }}" 
+                                   class="btn size-8 rounded-full p-0 hover:bg-info/20 text-info" title="Edit Entry">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                     </svg>
-                                    <p class="mt-2 text-slate-500 dark:text-navy-300">No progress entries yet</p>
-                                    <a href="{{ route('dietitian.progress.create', $patient->id) }}" class="btn mt-4 bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
-                                        Add First Progress Entry
-                                    </a>
-                                </div>
-                            @endif
+                                </a>
+                                
+                                <!-- Expand/Collapse Icon -->
+                                <button class="btn size-8 rounded-full p-0 hover:bg-slate-200 dark:hover:bg-navy-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                         :class="{ 'rotate-180': openEntry === {{ $index }} }">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
+                    
+                    <!-- Expandable Content -->
+                    <div x-show="openEntry === {{ $index }}" 
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 max-h-0"
+                         x-transition:enter-end="opacity-100 max-h-screen"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="opacity-100 max-h-screen"
+                         x-transition:leave-end="opacity-0 max-h-0"
+                         class="border-t border-slate-200 dark:border-navy-500 overflow-hidden"
+                         style="display: none;">
+                        
+                        <div class="p-4 bg-slate-50/50 dark:bg-navy-600/25">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- Left Column -->
+                                <div class="space-y-4">
+                                    @if($hasMeasurements)
+                                        <!-- Body Measurements -->
+                                        <div>
+                                            <h5 class="text-sm font-semibold text-slate-700 dark:text-navy-100 mb-3 flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                                </svg>
+                                                Body Measurements
+                                            </h5>
+                                            <div class="grid grid-cols-2 gap-3 text-sm">
+                                                @if($entry->chest)
+                                                    <div class="flex justify-between p-2 rounded bg-white dark:bg-navy-700/50">
+                                                        <span class="text-slate-600 dark:text-navy-300">Chest:</span>
+                                                        <span class="font-medium">{{ $entry->chest }} cm</span>
+                                                    </div>
+                                                @endif
+                                                @if($entry->waist)
+                                                    <div class="flex justify-between p-2 rounded bg-white dark:bg-navy-700/50">
+                                                        <span class="text-slate-600 dark:text-navy-300">Waist:</span>
+                                                        <span class="font-medium">{{ $entry->waist }} cm</span>
+                                                    </div>
+                                                @endif
+                                                @if($entry->hips)
+                                                    <div class="flex justify-between p-2 rounded bg-white dark:bg-navy-700/50">
+                                                        <span class="text-slate-600 dark:text-navy-300">Hips:</span>
+                                                        <span class="font-medium">{{ $entry->hips }} cm</span>
+                                                    </div>
+                                                @endif
+                                                @if($entry->left_arm)
+                                                    <div class="flex justify-between p-2 rounded bg-white dark:bg-navy-700/50">
+                                                        <span class="text-slate-600 dark:text-navy-300">Left Arm:</span>
+                                                        <span class="font-medium">{{ $entry->left_arm }} cm</span>
+                                                    </div>
+                                                @endif
+                                                @if($entry->right_arm)
+                                                    <div class="flex justify-between p-2 rounded bg-white dark:bg-navy-700/50">
+                                                        <span class="text-slate-600 dark:text-navy-300">Right Arm:</span>
+                                                        <span class="font-medium">{{ $entry->right_arm }} cm</span>
+                                                    </div>
+                                                @endif
+                                                @if($entry->left_thigh)
+                                                    <div class="flex justify-between p-2 rounded bg-white dark:bg-navy-700/50">
+                                                        <span class="text-slate-600 dark:text-navy-300">Left Thigh:</span>
+                                                        <span class="font-medium">{{ $entry->left_thigh }} cm</span>
+                                                    </div>
+                                                @endif
+                                                @if($entry->right_thigh)
+                                                    <div class="flex justify-between p-2 rounded bg-white dark:bg-navy-700/50">
+                                                        <span class="text-slate-600 dark:text-navy-300">Right Thigh:</span>
+                                                        <span class="font-medium">{{ $entry->right_thigh }} cm</span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endif
+                                    
+                                    @if($hasComposition)
+                                        <!-- Body Composition -->
+                                        <div>
+                                            <h5 class="text-sm font-semibold text-slate-700 dark:text-navy-100 mb-3 flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                                </svg>
+                                                Body Composition
+                                            </h5>
+                                            <div class="grid grid-cols-2 gap-3 text-sm">
+                                                @if($entry->fat_mass)
+                                                    <div class="flex justify-between p-2 rounded bg-white dark:bg-navy-700/50">
+                                                        <span class="text-slate-600 dark:text-navy-300">Fat Mass:</span>
+                                                        <span class="font-medium">{{ $entry->fat_mass }} kg</span>
+                                                    </div>
+                                                @endif
+                                                @if($entry->muscle_mass)
+                                                    <div class="flex justify-between p-2 rounded bg-white dark:bg-navy-700/50">
+                                                        <span class="text-slate-600 dark:text-navy-300">Muscle Mass:</span>
+                                                        <span class="font-medium">{{ $entry->muscle_mass }} kg</span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                                
+                                <!-- Right Column -->
+                                <div class="space-y-4">
+                                    @if($hasImages)
+                                        <!-- Progress Images -->
+                                        <div>
+                                            <h5 class="text-sm font-semibold text-slate-700 dark:text-navy-100 mb-3 flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                </svg>
+                                                Progress Images ({{ $entry->progressImages->count() }})
+                                            </h5>
+                                            <div class="grid grid-cols-3 gap-2" x-data="{ lightbox: null }">
+                                                @foreach($entry->progressImages as $imageIndex => $image)
+                                                    <div class="relative group cursor-pointer" @click="lightbox = '{{ asset('storage/' . $image->image_path) }}'">
+                                                        <img src="{{ asset('storage/' . $image->image_path) }}" 
+                                                             alt="Progress Image {{ $imageIndex + 1 }}" 
+                                                             class="w-full h-20 object-cover rounded border border-slate-200 dark:border-navy-600 hover:opacity-80 transition-opacity">
+                                                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 rounded flex items-center justify-center">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                                
+                                                <!-- Lightbox Modal -->
+                                                <div x-show="lightbox" 
+                                                     x-transition:enter="transition ease-out duration-300"
+                                                     x-transition:enter-start="opacity-0"
+                                                     x-transition:enter-end="opacity-100"
+                                                     @click="lightbox = null"
+                                                     @keydown.escape="lightbox = null"
+                                                     class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+                                                     style="display: none;">
+                                                    <div class="relative max-w-4xl max-h-full">
+                                                        <img :src="lightbox" class="max-w-full max-h-full rounded-lg shadow-2xl">
+                                                        <button @click="lightbox = null" 
+                                                                class="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                    
+                                    @if($entry->notes)
+                                        <!-- Notes -->
+                                        <div>
+                                            <h5 class="text-sm font-semibold text-slate-700 dark:text-navy-100 mb-3 flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                </svg>
+                                                Notes
+                                            </h5>
+                                            <div class="p-3 rounded bg-white dark:bg-navy-700/50 border border-slate-200 dark:border-navy-500">
+                                                <p class="text-sm text-slate-700 dark:text-navy-200 leading-relaxed whitespace-pre-line">{{ $entry->notes }}</p>
+                                            </div>
+                                        </div>
+                                    @endif
+                                    
+                                    <!-- Entry Actions -->
+                                    <div class="pt-2 border-t border-slate-200 dark:border-navy-500">
+                                        <div class="flex items-center justify-between">
+                                            <div class="text-xs text-slate-500 dark:text-navy-300">
+                                                Added {{ $entry->created_at->diffForHumans() }}
+                                                @if($entry->created_at != $entry->updated_at)
+                                                    • Updated {{ $entry->updated_at->diffForHumans() }}
+                                                @endif
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <a href="{{ route('dietitian.progress.edit', ['patient' => $patient->id, 'progress' => $entry->id]) }}" 
+                                                   class="btn rounded-lg bg-info/10 px-3 py-1 text-xs font-medium text-info hover:bg-info/20 transition-colors">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                    </svg>
+                                                    Edit
+                                                </a>
+                                                <form method="POST" action="{{ route('dietitian.progress.destroy', ['patient' => $patient->id, 'progress' => $entry->id]) }}" 
+                                                      onsubmit="return confirm('Are you sure you want to delete this progress entry? This action cannot be undone.');" class="inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn rounded-lg bg-error/10 px-3 py-1 text-xs font-medium text-error hover:bg-error/20 transition-colors">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                        </svg>
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @else
+        <!-- Empty State -->
+        <div class="card">
+            <div class="flex flex-col items-center justify-center py-12">
+                <div class="flex items-center justify-center size-20 rounded-full bg-slate-100 text-slate-400 dark:bg-navy-600 dark:text-navy-300 mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                </div>
+                <h4 class="text-lg font-medium text-slate-700 dark:text-navy-100 mb-2">No Progress Entries Yet</h4>
+                <p class="text-slate-500 dark:text-navy-300 text-center mb-6 max-w-md">
+                    Start tracking {{ $patient->user->name }}'s progress by adding their first weight measurement, body measurements, and progress photos.
+                </p>
+                <a href="{{ route('dietitian.progress.create', $patient->id) }}" 
+                   class="btn bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Add First Progress Entry
+                </a>
+            </div>
+        </div>
+    @endif
+</div>
 
                     <!-- Enhanced Medical Info Tab -->
                     <div x-show="activeTab === 'medicalTab'" class="p-4 sm:p-5" style="display: none;">
@@ -1134,6 +1566,101 @@
                 }
             };
         }
+
+
+
+        //////
+
+        // Weight Progress Chart - Simplified Debug Version
+@if($patient->progressEntries && $patient->progressEntries->count() > 0)
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Chart script starting...');
+    
+    const chartElement = document.getElementById('weightChart');
+    if (!chartElement) {
+        console.error('Chart canvas element not found!');
+        return;
+    }
+    
+    if (typeof Chart === 'undefined') {
+        console.error('Chart.js library not loaded!');
+        return;
+    }
+    
+    const ctx = chartElement.getContext('2d');
+    console.log('Canvas context obtained');
+    
+    // Prepare chart data
+    const progressData = @json($patient->progressEntries->sortBy('measurement_date')->values());
+    console.log('Progress data:', progressData);
+    
+    if (!progressData || progressData.length === 0) {
+        console.error('No progress data available');
+        return;
+    }
+    
+    const labels = progressData.map(entry => {
+        const date = new Date(entry.measurement_date);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    });
+    
+    const weights = progressData.map(entry => parseFloat(entry.weight));
+    console.log('Labels:', labels);
+    console.log('Weights:', weights);
+    
+    try {
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Weight Progress',
+                    data: weights,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    pointBackgroundColor: '#3b82f6',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Weight (kg)'
+                        },
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
+        console.log('Chart created successfully!', chart);
+    } catch (error) {
+        console.error('Error creating chart:', error);
+    }
+});
+@endif
     </script>
     @endslot
 </x-app-layout>

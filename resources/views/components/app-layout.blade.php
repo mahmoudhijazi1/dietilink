@@ -24,6 +24,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
         rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <script>
         /**
          * THIS SCRIPT REQUIRED FOR PREVENT FLICKERING IN SOME BROWSERS
@@ -32,6 +33,7 @@
             document.documentElement.classList.add("dark");
     </script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/4.4.0/chart.min.js"></script> --}}
 
 
     @isset($head)

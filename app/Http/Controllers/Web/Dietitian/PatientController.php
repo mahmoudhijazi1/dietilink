@@ -147,7 +147,9 @@ public function checkUsername(Request $request)
         ])
             ->findOrFail($id);
 
-        return view('dietitian.patients.show', compact('patient'));
+            $bmiData = $this->getCurrentBMIData($patient);
+
+        return view('dietitian.patients.show', compact('patient','bmiData'));
     }
 
     /**
@@ -338,18 +340,105 @@ public function checkUsername(Request $request)
     /**
      * Calculate BMI if height and weight are available
      */
-    private function calculateBMI($height, $weight)
-    {
-        if (!$height || !$weight)
-            return null;
-
-        // Convert height from cm to meters
-        $heightInMeters = $height / 100;
-        return round($weight / ($heightInMeters * $heightInMeters), 1);
+    /**
+ * Calculate BMI with enhanced information
+ */
+private function calculateBMI($height, $weight)
+{
+    if (!$height || !$weight) {
+        return null;
     }
 
-    public function sendInviteEmail(Request $request)
-    {
-        // Implementation for sending invitation emails
+    // Convert height from cm to meters
+    $heightInMeters = $height / 100;
+    return round($weight / ($heightInMeters * $heightInMeters), 1);
+}
+
+/**
+ * Get BMI category and color based on BMI value
+ */
+private function getBMICategory($bmi)
+{
+    if (!$bmi) {
+        return ['category' => 'Unknown', 'color' => 'text-slate-500'];
     }
+
+    if ($bmi < 18.5) {
+        return ['category' => 'Underweight', 'color' => 'text-blue-600'];
+    } elseif ($bmi < 25) {
+        return ['category' => 'Normal', 'color' => 'text-success'];
+    } elseif ($bmi < 30) {
+        return ['category' => 'Overweight', 'color' => 'text-warning'];
+    } else {
+        return ['category' => 'Obese', 'color' => 'text-error'];
+    }
+}
+
+/**
+ * Get BMI interpretation based on gender (for additional context)
+ */
+private function getBMIInterpretation($bmi, $gender = null)
+{
+    if (!$bmi) return null;
+    
+    $baseInfo = $this->getBMICategory($bmi);
+    
+    // Add gender-specific context (muscle mass considerations)
+    $interpretation = $baseInfo['category'];
+    
+    if ($gender === 'male' && $bmi >= 25 && $bmi < 27) {
+        $interpretation .= ' (may be muscle mass)';
+    }
+    
+    return [
+        'category' => $interpretation,
+        'color' => $baseInfo['color'],
+        'base_category' => $baseInfo['category']
+    ];
+}
+
+/**
+ * Get patient's current BMI data (using latest weight)
+ */
+private function getCurrentBMIData($patient)
+{
+    if (!$patient->height) {
+        return null;
+    }
+
+    // Get current weight (latest progress entry or initial weight)
+    $currentWeight = $patient->initial_weight;
+    
+    if ($patient->progressEntries && $patient->progressEntries->count() > 0) {
+        $latestEntry = $patient->progressEntries->first();
+        $currentWeight = $latestEntry->weight;
+    }
+
+    if (!$currentWeight) {
+        return null;
+    }
+
+    $currentBMI = $this->calculateBMI($patient->height, $currentWeight);
+    $bmiInfo = $this->getBMIInterpretation($currentBMI, $patient->gender);
+
+    // Calculate initial BMI for comparison
+    $initialBMI = null;
+    $bmiChange = null;
+    
+    if ($patient->initial_weight) {
+        $initialBMI = $this->calculateBMI($patient->height, $patient->initial_weight);
+        if ($currentBMI && $initialBMI) {
+            $bmiChange = round($currentBMI - $initialBMI, 1);
+        }
+    }
+
+    return [
+        'current' => $currentBMI,
+        'initial' => $initialBMI,
+        'change' => $bmiChange,
+        'category' => $bmiInfo['category'] ?? 'Unknown',
+        'color' => $bmiInfo['color'] ?? 'text-slate-500',
+        'current_weight' => $currentWeight
+    ];
+}
 }

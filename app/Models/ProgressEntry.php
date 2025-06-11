@@ -35,7 +35,7 @@ class ProgressEntry extends Model
         return $this->belongsTo(Patient::class);
     }
 
-    public function images()
+    public function progressImages()
     {
         return $this->hasMany(ProgressImage::class);
     }
