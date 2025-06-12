@@ -1,71 +1,52 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\AuthController;
-use App\Http\Controllers\Api\V1\InvitePatientController;
-use App\Http\Controllers\Api\V1\InvitationAcceptController;
-use App\Http\Controllers\Api\V1\PatientProfileController;
-use App\Http\Controllers\Api\V1\PatientProgressController;
 
-// ==============================
-// API ROUTES FOR /api/v1/*
-// ==============================
 
+// Public routes (no authentication required)
 Route::prefix('v1')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+});
 
-    // === PUBLIC ENDPOINTS ===
+// Protected routes (authentication required)
+Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
+    // Auth routes
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout-all', [AuthController::class, 'logoutAll']);
+    Route::get('/me', [AuthController::class, 'me']);
+    Route::post('/refresh-token', [AuthController::class, 'refresh']);
+    
+    // Patient routes (role-based access)
+    Route::middleware('role:patient')->group(function () {
+        // Patient-specific endpoints will go here
 
-    // Patient accepts invitation (public - no auth)
-    Route::get('invite/accept/{token}', [InvitationAcceptController::class, 'show']);
-    Route::post('invite/accept/{token}', [InvitationAcceptController::class, 'accept']);
+        // Profile Management
+        Route::get('/profile', [App\Http\Controllers\Api\V1\PatientProfileController::class, 'profile']);
+        Route::put('/profile', [App\Http\Controllers\Api\V1\PatientProfileController::class, 'updateProfile']);
+        Route::post('/change-password', [App\Http\Controllers\Api\V1\PatientProfileController::class, 'changePassword']);
+        Route::get('/bmi', [App\Http\Controllers\Api\V1\PatientProfileController::class, 'getBMIData']);
 
-    // Authentication (login - public)
-    Route::post('login', [AuthController::class, 'login']);
-
-    // Debug endpoint (REMOVE in production)
-    Route::get('debug-token/{token}', function ($token) {
-        return \App\Models\User::where('invitation_token', $token)->get();
+        // Patient progress management
+        Route::get('/progress', [App\Http\Controllers\Api\V1\PatientProgressController::class, 'index']);
+        Route::get('/progress/latest', [App\Http\Controllers\Api\V1\PatientProgressController::class, 'latest']);
+        Route::get('/progress/statistics', [App\Http\Controllers\Api\V1\PatientProgressController::class, 'statistics']);
+        Route::post('/progress', [App\Http\Controllers\Api\V1\PatientProgressController::class, 'store']);
+        Route::get('/progress/{id}', [App\Http\Controllers\Api\V1\PatientProgressController::class, 'show']);
+        Route::put('/progress/{id}', [App\Http\Controllers\Api\V1\PatientProgressController::class, 'update']);
+        Route::delete('/progress/{id}', [App\Http\Controllers\Api\V1\PatientProgressController::class, 'destroy']);
+        Route::delete('/progress/{progressId}/images/{imageId}', [App\Http\Controllers\Api\V1\PatientProgressController::class, 'deleteImage']);
+        
     });
-
-    // === PATIENT ENDPOINTS (MOBILE APP) ===
-    // - These routes require the user to be authenticated (usually a patient)
-    // - They do NOT need 'tenant' middleware, as the patient is already scoped
-    Route::middleware('auth:sanctum')->prefix('patient')->group(function () {
-
-        // Profile management
-        Route::get('profile', [PatientProfileController::class, 'show']);
-        Route::put('profile', [PatientProfileController::class, 'update']);
-
-        // Progress tracking
-        Route::prefix('progress')->group(function () {
-            Route::get('/', [PatientProgressController::class, 'index']);
-            Route::post('/', [PatientProgressController::class, 'store']);
-            Route::get('/latest', [PatientProgressController::class, 'latest']);
-            // Add show/update/destroy if needed later
-        });
-
-        // Future: Add more patient-only endpoints here
+    
+    // Dietitian routes (role-based access)
+    Route::middleware('role:dietitian')->group(function () {
+        // Dietitian-specific endpoints will go here
     });
-
-    // === GENERIC AUTH-PROTECTED ENDPOINTS (ALL USERS) ===
-    Route::middleware('auth:sanctum')->group(function () {
-        // Logout current user (patient or dietitian)
-        Route::post('logout', [AuthController::class, 'logout']);
-
-        // Get current logged-in user info
-        Route::get('me', [AuthController::class, 'me']);
+    
+    // Admin routes (role-based access)
+    Route::middleware('role:admin')->group(function () {
+        // Admin-specific endpoints will go here
     });
-
-    // === DIETITIAN/ADMIN ENDPOINTS ===
-    // - These routes require BOTH authentication and tenant context
-    Route::middleware(['auth:sanctum', 'tenant'])->group(function () {
-
-        // Dietitian invites a patient
-        Route::post('invite-patient', [InvitePatientController::class, 'invite']);
-
-        // Future: Add dietitian/admin-only endpoints here (manage patients, meal plans, etc)
-    });
-
-    // === PUBLIC ENDPOINTS (if needed) ===
-    // Add other routes here if needed (e.g., general info, support, etc)
 });
