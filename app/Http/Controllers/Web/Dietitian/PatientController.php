@@ -62,7 +62,6 @@ class PatientController extends Controller
     $user = User::create([
         'name' => $request->name,
         'username' => $request->username,
-        'email' => $request->username . '@example.com', // Temporary email, can be updated later
         'password' => Hash::make($request->password),
         'role' => 'patient',
         'tenant_id' => auth()->user()->tenant_id,
