@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PagesController;
+use App\Http\Controllers\Web\Dietitian\AvailabilityController;
 use App\Http\Controllers\Web\Dietitian\DashboardController;
 use App\Http\Controllers\Web\Dietitian\FoodController;
 use App\Http\Controllers\Web\Dietitian\PatientController;
@@ -92,8 +93,18 @@ Route::middleware('auth')->group(function () {
                 Route::get('/{mealPlan}', [MealPlanController::class, 'show'])->name('show');
                 Route::delete('/{mealPlan}', [MealPlanController::class, 'destroy'])->name('destroy');
                 Route::post('/{mealPlan}/activate', [MealPlanController::class, 'activate'])->name('activate');
-            }); 
-//http://127.0.0.1:9004/dietitian/meal-plans/4/activate
+            });
+            // Add this inside the dietitian middleware group in web.php
+            Route::prefix('availability')->name('availability.')->group(function () {
+                Route::get('/', [App\Http\Controllers\Web\Dietitian\AvailabilityController::class, 'index'])->name('index');
+                Route::get('/data', [App\Http\Controllers\Web\Dietitian\AvailabilityController::class, 'getAvailabilityData'])->name('data');
+                Route::get('/create', [App\Http\Controllers\Web\Dietitian\AvailabilityController::class, 'create'])->name('create');
+                Route::post('/', [App\Http\Controllers\Web\Dietitian\AvailabilityController::class, 'store'])->name('store');
+                Route::get('/{availabilitySlot}/edit', [App\Http\Controllers\Web\Dietitian\AvailabilityController::class, 'edit'])->name('edit');
+                Route::put('/{availabilitySlot}', [App\Http\Controllers\Web\Dietitian\AvailabilityController::class, 'update'])->name('update');
+                Route::delete('/{availabilitySlot}', [App\Http\Controllers\Web\Dietitian\AvailabilityController::class, 'destroy'])->name('destroy');
+                Route::post('/bulk-store', [App\Http\Controllers\Web\Dietitian\AvailabilityController::class, 'bulkStore'])->name('bulk-store');
+            });
         });
 
 
