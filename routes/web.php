@@ -105,6 +105,48 @@ Route::middleware('auth')->group(function () {
                 Route::delete('/{availabilitySlot}', [App\Http\Controllers\Web\Dietitian\AvailabilityController::class, 'destroy'])->name('destroy');
                 Route::post('/bulk-store', [App\Http\Controllers\Web\Dietitian\AvailabilityController::class, 'bulkStore'])->name('bulk-store');
             });
+
+
+
+            // Appointment Types Routes
+            Route::prefix('appointment-types')->name('appointment-types.')->group(function () {
+                Route::get('/', [App\Http\Controllers\Web\Dietitian\AppointmentTypeController::class, 'index'])->name('index');
+                Route::get('/create', [App\Http\Controllers\Web\Dietitian\AppointmentTypeController::class, 'create'])->name('create');
+                Route::post('/', [App\Http\Controllers\Web\Dietitian\AppointmentTypeController::class, 'store'])->name('store');
+                Route::get('/{appointmentType}', [App\Http\Controllers\Web\Dietitian\AppointmentTypeController::class, 'show'])->name('show');
+                Route::get('/{appointmentType}/edit', [App\Http\Controllers\Web\Dietitian\AppointmentTypeController::class, 'edit'])->name('edit');
+                Route::put('/{appointmentType}', [App\Http\Controllers\Web\Dietitian\AppointmentTypeController::class, 'update'])->name('update');
+                Route::delete('/{appointmentType}', [App\Http\Controllers\Web\Dietitian\AppointmentTypeController::class, 'destroy'])->name('destroy');
+                Route::post('/update-sort-order', [App\Http\Controllers\Web\Dietitian\AppointmentTypeController::class, 'updateSortOrder'])->name('update-sort-order');
+            });
+
+            // Appointments Routes
+            Route::prefix('appointments')->name('appointments.')->group(function () {
+                Route::get('/', [App\Http\Controllers\Web\Dietitian\AppointmentController::class, 'index'])->name('index');
+                Route::get('/create', [App\Http\Controllers\Web\Dietitian\AppointmentController::class, 'create'])->name('create');
+                Route::post('/', [App\Http\Controllers\Web\Dietitian\AppointmentController::class, 'store'])->name('store');
+                Route::get('/{appointment}', [App\Http\Controllers\Web\Dietitian\AppointmentController::class, 'show'])->name('show');
+                Route::get('/{appointment}/edit', [App\Http\Controllers\Web\Dietitian\AppointmentController::class, 'edit'])->name('edit');
+                Route::put('/{appointment}', [App\Http\Controllers\Web\Dietitian\AppointmentController::class, 'update'])->name('update');
+                Route::delete('/{appointment}', [App\Http\Controllers\Web\Dietitian\AppointmentController::class, 'destroy'])->name('destroy');
+
+                // Appointment Status Management
+                Route::patch('/{appointment}/cancel', [App\Http\Controllers\Web\Dietitian\AppointmentController::class, 'cancel'])->name('cancel');
+                Route::patch('/{appointment}/complete', [App\Http\Controllers\Web\Dietitian\AppointmentController::class, 'complete'])->name('complete');
+                Route::patch('/{appointment}/no-show', [App\Http\Controllers\Web\Dietitian\AppointmentController::class, 'markNoShow'])->name('no-show');
+
+                // Available Slots API Routes (for AJAX calls)
+                Route::get('/available-slots/get', [App\Http\Controllers\Web\Dietitian\AppointmentController::class, 'getAvailableSlots'])->name('available-slots');
+                Route::get('/available-slots/range', [App\Http\Controllers\Web\Dietitian\AppointmentController::class, 'getAvailableSlotsForRange'])->name('available-slots-range');
+                Route::get('/daily-summary/get', [App\Http\Controllers\Web\Dietitian\AppointmentController::class, 'getDailySummary'])->name('daily-summary');
+                Route::get('/next-available/get', [App\Http\Controllers\Web\Dietitian\AppointmentController::class, 'getNextAvailableSlot'])->name('next-available');
+            });
+
+            // Calendar Routes
+            Route::prefix('calendar')->name('calendar.')->group(function () {
+                Route::get('/', [App\Http\Controllers\Web\Dietitian\AppointmentCalendarController::class, 'index'])->name('index');
+                Route::get('/data', [App\Http\Controllers\Web\Dietitian\AppointmentCalendarController::class, 'getCalendarData'])->name('data');
+            });
         });
 
 

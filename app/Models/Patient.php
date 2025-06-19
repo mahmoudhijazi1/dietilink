@@ -62,11 +62,96 @@ class Patient extends Model
     {
         return $this->hasMany(ProgressEntry::class);
     }
+    
     public function mealPlans()
     {
         return $this->hasMany(MealPlan::class);
     }
 
+    // NEW: Relationship to appointments
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class)->orderBy('appointment_date')->orderBy('start_time');
+    }
+
+    // NEW: Get upcoming appointments
+    public function getUpcomingAppointments($limit = null)
+    {
+        $query = $this->appointments()->upcoming()->with(['dietitian.user', 'appointmentType']);
+        
+        if ($limit) {
+            $query->limit($limit);
+        }
+        
+        return $query->get();
+    }
+
+    // NEW: Get past appointments
+    public function getPastAppointments($limit = null)
+    {
+        $query = $this->appointments()->past()->with(['dietitian.user', 'appointmentType']);
+        
+        if ($limit) {
+            $query->limit($limit);
+        }
+        
+        return $query->get();
+    }
+
+    // NEW: Get next appointment
+    public function getNextAppointment()
+    {
+        return $this->appointments()
+            ->upcoming()
+            ->with(['dietitian.user', 'appointmentType'])
+            ->first();
+    }
+
+    // NEW: Get appointments with a specific dietitian
+    public function getAppointmentsWithDietitian($dietitianId)
+    {
+        return $this->appointments()
+            ->forDietitian($dietitianId)
+            ->with(['appointmentType'])
+            ->orderBy('appointment_date', 'desc')
+            ->orderBy('start_time', 'desc')
+            ->get();
+    }
+
+    // NEW: Check if patient has any upcoming appointments
+    public function hasUpcomingAppointments()
+    {
+        return $this->appointments()->upcoming()->exists();
+    }
+
+    // NEW: Check if patient has appointments with specific dietitian
+    public function hasAppointmentsWith($dietitianId)
+    {
+        return $this->appointments()->forDietitian($dietitianId)->exists();
+    }
+
+    // NEW: Get appointment count by status
+    public function getAppointmentCountByStatus($status = null)
+    {
+        $query = $this->appointments();
+        
+        if ($status) {
+            $query->byStatus($status);
+        }
+        
+        return $query->count();
+    }
+
+    // NEW: Get last completed appointment
+    public function getLastCompletedAppointment()
+    {
+        return $this->appointments()
+            ->byStatus('completed')
+            ->with(['dietitian.user', 'appointmentType'])
+            ->orderBy('appointment_date', 'desc')
+            ->orderBy('start_time', 'desc')
+            ->first();
+    }
 
     // add boot
     protected static function boot()
